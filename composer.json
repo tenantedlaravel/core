@@ -6,6 +6,9 @@
     "php"              : "^8.1",
     "laravel/framework": "^10.0"
   },
+  "require-dev"      : {
+    "marcocesarato/php-conventional-changelog": "^1.17"
+  },
   "license"          : "MIT",
   "autoload"         : {
     "psr-4": {
@@ -23,5 +26,12 @@
       "email": "code@ollie.codes"
     }
   ],
-  "minimum-stability": "stable"
+  "minimum-stability": "stable",
+  "scripts"          : {
+    "changelog"    : "conventional-changelog",
+    "release"      : "conventional-changelog --commit",
+    "release:patch": "conventional-changelog --patch --commit",
+    "release:minor": "conventional-changelog --minor --commit",
+    "release:major": "conventional-changelog --major --commit"
+  }
 }
