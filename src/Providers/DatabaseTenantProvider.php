@@ -79,6 +79,14 @@ class DatabaseTenantProvider implements TenantProvider
     }
 
     /**
+     * @return string
+     */
+    public function getEntityClass(): string
+    {
+        return $this->entity;
+    }
+
+    /**
      * @param string $identifier
      *
      * @return \Tenanted\Core\Contracts\Tenant|null

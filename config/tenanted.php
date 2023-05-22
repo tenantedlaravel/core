@@ -7,14 +7,15 @@ return [
     | Tenanted Defaults
     |--------------------------------------------------------------------------
     |
-    | This option controls the default tenanted provider and resolver options
-    | for your application. You may change these defaults as required, but
-    | they're a perfect start for most applications.
+    | This option controls the default tenancy, tenanted provider and resolver
+    | options for your application. You may change these defaults as required,
+    | but they're a perfect start for most applications.
     |
     */
 
     'defaults' => [
         'provider' => 'project',
+        'tenancy'  => 'primary',
     ],
 
     /*
@@ -63,6 +64,50 @@ return [
         //     'key'        => 'id',
         //     'entity'     => \Tenanted\Core\Support\TenantEntity::class,
         // ],
+
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tenant Resolvers
+    |--------------------------------------------------------------------------
+    |
+    | This defines how the tenants are resolved during a request.
+    |
+    | You can define more than one resolver, and have tenants resolvers in
+    | different ways for different requests.
+    |
+    | Supported: "subdomain", "domain", "path", "header", "session", "auth"
+    |
+    */
+
+    'resolvers' => [
+
+        'subdomain' => [
+            'driver' => 'subdomain',
+            'domain' => env('APP_TENANT_DOMAIN', 'localhost'),
+        ],
+
+        'path' => [
+            'driver'  => 'path',
+            'segment' => 1,
+        ],
+
+        'domain' => [
+            'driver' => 'domain',
+        ],
+
+        'header' => [
+            'driver' => 'header',
+        ],
+
+        'session' => [
+            'driver' => 'session',
+        ],
+
+        'auth' => [
+            'driver' => 'auth',
+        ],
 
     ],
 

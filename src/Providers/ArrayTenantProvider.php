@@ -71,6 +71,9 @@ class ArrayTenantProvider implements TenantProvider
         $this->mapTenants();
     }
 
+    /**
+     * @return void
+     */
     private function mapTenants(): void
     {
         foreach ($this->tenants as $index => $tenant) {
@@ -103,11 +106,27 @@ class ArrayTenantProvider implements TenantProvider
         );
     }
 
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
+    /**
+     * @return string
+     */
+    public function getEntityClass(): string
+    {
+        return $this->entity;
+    }
+
+    /**
+     * @param string $identifier
+     *
+     * @return \Tenanted\Core\Contracts\Tenant|null
+     */
     public function retrieveByIdentifier(string $identifier): ?Tenant
     {
         if (! isset($this->tenantIdentifierMap[$identifier])) {
@@ -117,6 +136,11 @@ class ArrayTenantProvider implements TenantProvider
         return $this->makeEntity($this->tenantIdentifierMap[$identifier]);
     }
 
+    /**
+     * @param mixed $key
+     *
+     * @return \Tenanted\Core\Contracts\Tenant|null
+     */
     public function retrieveByKey(mixed $key): ?Tenant
     {
         if (! isset($this->tenantKeyMap[$key])) {
@@ -126,6 +150,12 @@ class ArrayTenantProvider implements TenantProvider
         return $this->makeEntity($this->tenantKeyMap[$key]);
     }
 
+    /**
+     * @param string $name
+     * @param mixed  $value
+     *
+     * @return \Tenanted\Core\Contracts\Tenant|null
+     */
     public function retrieveBy(string $name, mixed $value): ?Tenant
     {
         foreach ($this->tenants as $index => $tenant) {

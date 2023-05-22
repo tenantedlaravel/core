@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 ### Features
 
 
+##### Facades
+
+* Added the Tenanted facade for accessing the TenantedManager ([d79334](https://github.com/tenantedlaravel/core/commit/d79334e98f05d3c3d96c609887c5ab751d79727f))
+
 ##### Provider
 
 * Added core TenantProvider contract and default implementations ([4563c8](https://github.com/tenantedlaravel/core/commit/4563c8f38032b5afb381b44a373331d8a9a3a6a0))

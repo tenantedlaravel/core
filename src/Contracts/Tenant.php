@@ -52,4 +52,11 @@ interface Tenant
      * @return string
      */
     public function getTenantKeyName(): string;
+
+    /**
+     * Determine whether the tenant is active
+     *
+     * @return bool
+     */
+    public function isTenantActive(): bool;
 }

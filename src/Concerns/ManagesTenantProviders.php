@@ -32,11 +32,16 @@ trait ManagesTenantProviders
     protected array $sourceResolvers = [];
 
     /**
+     * @var list<\Tenanted\Core\Contracts\TenantProvider>
+     */
+    protected array $providerStack = [];
+
+    /**
      * Get the name of the default tenant provider
      *
      * @return string
      */
-    abstract protected function getDefaultProviderName(): string;
+    abstract public function getDefaultProviderName(): string;
 
     /**
      * Get the tenant provider config by name
@@ -62,10 +67,6 @@ trait ManagesTenantProviders
 
         if ($config === null) {
             throw TenantProviderException::missingConfig($name);
-        }
-
-        if (isset($this->providerCreators[$name])) {
-            return call_user_func($this->providerCreators[$name], $config, $name);
         }
 
         $driver = $config['driver'] ?? null;
@@ -235,5 +236,29 @@ trait ManagesTenantProviders
             'php'  => $config['data'] ?? require $config['path'],
             'json' => json_decode($config['data'] ?? file_get_contents($config['path']), true, 512, JSON_THROW_ON_ERROR)
         };
+    }
+
+    /**
+     * Stack a tenant provider
+     *
+     * @param \Tenanted\Core\Contracts\TenantProvider $provider
+     *
+     * @return static
+     */
+    public function stackProvider(TenantProvider $provider): static
+    {
+        $this->providerStack[] = $provider;
+
+        return $this;
+    }
+
+    /**
+     * Get the current tenant provider stack
+     *
+     * @return list<\Tenanted\Core\Contracts\TenantProvider>
+     */
+    public function providerStack(): array
+    {
+        return $this->providerStack;
     }
 }

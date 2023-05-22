@@ -7,6 +7,9 @@ namespace Tenanted\Core\Contracts;
  *
  * Marks a class as being "tenant-aware", meaning that when it is instantiated by
  * the container, the current tenant should be injected.
+ *
+ * @package tenantedlaravel/core
+ * @author  Ollie Read <code@ollie.codes>
  */
 interface TenantAware
 {

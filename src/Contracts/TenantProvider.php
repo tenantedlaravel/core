@@ -44,4 +44,11 @@ interface TenantProvider
      * @return string
      */
     public function getName(): string;
+
+    /**
+     * Get the entity class return by the provided
+     *
+     * @return string
+     */
+    public function getEntityClass(): string;
 }

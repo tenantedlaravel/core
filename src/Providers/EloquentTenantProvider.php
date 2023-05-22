@@ -65,6 +65,14 @@ class EloquentTenantProvider implements TenantProvider
     }
 
     /**
+     * @return string
+     */
+    public function getEntityClass(): string
+    {
+        return $this->model;
+    }
+
+    /**
      * @param string $identifier
      *
      * @return M|null
