@@ -19,11 +19,13 @@ use Illuminate\Http\Request;
 interface ActsAsMiddleware
 {
     /**
+     * Handle a request as if this class were middleware
+     *
      * @param \Illuminate\Http\Request         $request
      * @param \Closure                         $next
      * @param \Tenanted\Core\Contracts\Tenancy $tenancy
      *
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, Tenancy $tenancy): mixed;
+    public function asMiddleware(Request $request, Closure $next, Tenancy $tenancy): mixed;
 }
