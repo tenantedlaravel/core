@@ -50,7 +50,7 @@ abstract class ParameterTenantResolver extends BaseTenantResolver implements Act
      *
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, Tenancy $tenancy): mixed
+    public function asMiddleware(Request $request, Closure $next, Tenancy $tenancy): mixed
     {
         if ($tenancy->resolver() === $this && $tenancy->check()) {
             app(UrlGenerator::class)->defaults([RouteHelper::parameterName($this->name(), $tenancy->name()) => $tenancy->identifiedUsing()]);

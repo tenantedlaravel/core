@@ -9,11 +9,12 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\RouteRegistrar;
+use Tenanted\Core\Contracts\ActsAsMiddleware;
 use Tenanted\Core\Contracts\Tenancy;
 use Tenanted\Core\Exceptions\TenantResolverException;
 use Tenanted\Core\Support\RouteHelper;
 
-class CookieTenantResolver extends BaseTenantResolver
+class CookieTenantResolver extends BaseTenantResolver implements ActsAsMiddleware
 {
     /**
      * @var \Illuminate\Cookie\CookieJar

@@ -8,11 +8,12 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\RouteRegistrar;
+use Tenanted\Core\Contracts\ActsAsMiddleware;
 use Tenanted\Core\Contracts\Tenancy;
 use Tenanted\Core\Exceptions\TenantResolverException;
 use Tenanted\Core\Support\RouteHelper;
 
-class HeaderTenantResolver extends BaseTenantResolver
+class HeaderTenantResolver extends BaseTenantResolver implements ActsAsMiddleware
 {
     private ?string $header;
 
@@ -46,7 +47,7 @@ class HeaderTenantResolver extends BaseTenantResolver
      *
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, Tenancy $tenancy): mixed
+    public function asMiddleware(Request $request, Closure $next, Tenancy $tenancy): mixed
     {
         $response = $next($request);
 
