@@ -95,6 +95,6 @@ class TenantedServiceProvider extends ServiceProvider
      */
     private function packageDir(string...$paths): string
     {
-        return basename(__DIR__) . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $paths);
+        return dirname(__DIR__) . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $paths);
     }
 }
