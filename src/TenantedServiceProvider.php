@@ -43,6 +43,17 @@ class TenantedServiceProvider extends ServiceProvider
         $this->app->bind(TenantProvider::class, function (Application $app, array $parameters) {
             return $app->make(TenantedManager::class)->provider($parameters['name'] ?? null);
         });
+
+        // When requiring an instance of Tenancy we will return the currently
+        // active tenancy, that is, the one on the end of the stack.
+        $this->app->bind(TenancyContract::class, function (Application $app) {
+            return $app->make(TenantedManager::class)->current();
+        });
+
+        // Same for the Tenant contract
+        $this->app->bind(Tenant::class, function (Application $app) {
+            return $app->make(TenantedManager::class)->current()?->tenant();
+        });
     }
 
     /**
