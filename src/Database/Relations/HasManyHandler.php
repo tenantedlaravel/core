@@ -39,7 +39,7 @@ class HasManyHandler extends BaseRelationHandler
             }
         }
 
-        // We can't check the pivot table data, really, without adding an extra
+        // We can't check do any more checks, really, without adding an extra
         // query, which we really don't want
     }
 

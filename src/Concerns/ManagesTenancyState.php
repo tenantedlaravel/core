@@ -14,17 +14,17 @@ trait ManagesTenancyState
     /**
      * @var \Tenanted\Core\Contracts\Tenant|null
      */
-    private ?Tenant $tenant;
+    private ?Tenant $tenant = null;
 
     /**
      * @var string|null
      */
-    private ?string $via;
+    private ?string $via = null;
 
     /**
      * @var mixed
      */
-    private mixed $viaValue;
+    private mixed $viaValue = null;
 
     /**
      * @return bool

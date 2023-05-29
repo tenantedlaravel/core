@@ -1,5 +1,7 @@
 <?php
 
+use Tenanted\Core\Features;
+
 return [
 
     /*
@@ -105,9 +107,11 @@ return [
             'driver' => 'session',
         ],
 
-        'auth' => [
-            'driver' => 'auth',
-        ],
+    ],
+
+    'features' => [
+
+        Features\NotFoundOnInactive::class
 
     ],
 

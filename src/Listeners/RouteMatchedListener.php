@@ -5,6 +5,7 @@ namespace Tenanted\Core\Listeners;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
+use Tenanted\Core\Contracts\ActsAsMiddleware;
 use Tenanted\Core\Http\Middleware\TenantedRoutes;
 use Tenanted\Core\TenantedManager;
 
@@ -23,27 +24,35 @@ class RouteMatchedListener
     public function handle(RouteMatched $event): void
     {
         $routeMiddleware = app(Router::class)->resolveMiddleware($event->route->middleware(), $event->route->excludedMiddleware());
+        $forget          = true;
 
         foreach ($routeMiddleware as $middleware) {
-            if (Str::startsWith($middleware, TenantedRoutes::class . ':')) {
-                $this->handleFoundMiddleware($event, $middleware);
+            if ($middleware === TenantedRoutes::class || Str::startsWith($middleware, TenantedRoutes::class . ':')) {
+                if ($this->handleFoundMiddleware($event, $middleware)) {
+                    $forget = false;
+                }
             }
         }
 
-        $event->route->withoutMiddleware(TenantedRoutes::class);
+        if ($forget) {
+            $event->route->withoutMiddleware(TenantedRoutes::class);
+        }
     }
 
-    private function handleFoundMiddleware(RouteMatched $event, mixed $middleware): void
+    private function handleFoundMiddleware(RouteMatched $event, mixed $middleware): bool
     {
         [, $arguments] = explode(':', $middleware);
-        [$resolverName, $tenancyName] = explode(',', $arguments);
+        [$tenancyName, $resolverName] = explode(',', $arguments);
 
         $tenancy = $this->manager->tenancy($tenancyName ?? null);
+        $this->manager->stackTenancy($tenancy);
 
         if ($resolverName !== null) {
             $tenancy->use($this->manager->resolver($resolverName));
         }
 
         $tenancy->resolve($event->request);
+
+        return $tenancy->resolver() instanceof ActsAsMiddleware;
     }
 }

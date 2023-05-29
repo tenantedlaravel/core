@@ -33,5 +33,12 @@
     "release:patch": "conventional-changelog --patch --commit",
     "release:minor": "conventional-changelog --minor --commit",
     "release:major": "conventional-changelog --major --commit"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Tenanted\\Core\\TenantedServiceProvider"
+      ]
+    }
   }
 }

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\RouteRegistrar;
 use Illuminate\Support\Str;
-use Tenanted\Core\Support\RouteHelper;
+use Tenanted\Core\Support\TenantedHelper;
 
 class SubdomainTenantResolver extends ParameterTenantResolver
 {
@@ -35,7 +35,7 @@ class SubdomainTenantResolver extends ParameterTenantResolver
     public function routes(?string $tenancy = null, ?string $value = null): RouteRegistrar
     {
         return app(Router::class)
-            ->domain(RouteHelper::parameter($this->name(), $tenancy, $value) . '.' . $this->domain)
-            ->middleware(RouteHelper::middleware($this->name(), $tenancy));
+            ->domain(TenantedHelper::parameter($this->name(), $tenancy, $value) . '.' . $this->domain)
+            ->middleware(TenantedHelper::middleware($this->name(), $tenancy));
     }
 }

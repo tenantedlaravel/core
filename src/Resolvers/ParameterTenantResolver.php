@@ -9,7 +9,7 @@ use Illuminate\Routing\UrlGenerator;
 use Tenanted\Core\Contracts\ActsAsMiddleware;
 use Tenanted\Core\Contracts\Tenancy;
 use Tenanted\Core\Exceptions\TenantResolverException;
-use Tenanted\Core\Support\RouteHelper;
+use Tenanted\Core\Support\TenantedHelper;
 
 abstract class ParameterTenantResolver extends BaseTenantResolver implements ActsAsMiddleware
 {
@@ -26,7 +26,7 @@ abstract class ParameterTenantResolver extends BaseTenantResolver implements Act
     public function resolve(Request $request, Tenancy $tenancy): bool
     {
         $route     = $request->route();
-        $parameter = RouteHelper::parameterName($this->name(), $tenancy->name());
+        $parameter = TenantedHelper::parameterName($this->name(), $tenancy->name());
 
         if ($route === null || ! $route->hasParameter($parameter)) {
             $identifier = $this->fallbackResolution($request);
@@ -53,7 +53,7 @@ abstract class ParameterTenantResolver extends BaseTenantResolver implements Act
     public function asMiddleware(Request $request, Closure $next, Tenancy $tenancy): mixed
     {
         if ($tenancy->resolver() === $this && $tenancy->check()) {
-            app(UrlGenerator::class)->defaults([RouteHelper::parameterName($this->name(), $tenancy->name()) => $tenancy->identifiedUsing()]);
+            app(UrlGenerator::class)->defaults([TenantedHelper::parameterName($this->name(), $tenancy->name()) => $tenancy->identifiedUsing()]);
         }
 
         return $next($request);

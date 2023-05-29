@@ -24,6 +24,8 @@ trait ManagesTenancies
      */
     protected array $tenancyStack = [];
 
+    protected ?Tenancy $current = null;
+
     /**
      * Get the name of the default tenancy
      *
@@ -100,6 +102,16 @@ trait ManagesTenancies
     }
 
     /**
+     * Get the current tenancy
+     *
+     * @return \Tenanted\Core\Contracts\Tenancy|null
+     */
+    public function current(): ?Tenancy
+    {
+        return $this->current;
+    }
+
+    /**
      * Register a custom tenancy creator
      *
      * @param string                                                    $name
@@ -123,7 +135,7 @@ trait ManagesTenancies
      */
     public function stackTenancy(Tenancy $tenancy): static
     {
-        $this->tenancyStack[] = $tenancy;
+        $this->tenancyStack[] = $this->current = $tenancy;
 
         return $this;
     }

@@ -6,7 +6,7 @@ namespace Tenanted\Core\Resolvers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\RouteRegistrar;
-use Tenanted\Core\Support\RouteHelper;
+use Tenanted\Core\Support\TenantedHelper;
 
 /**
  *
@@ -49,7 +49,7 @@ class PathTenantResolver extends ParameterTenantResolver
     public function routes(?string $tenancy = null, ?string $value = null): RouteRegistrar
     {
         return app(Router::class)
-            ->middleware(RouteHelper::middleware($this->name(), $tenancy))
-            ->prefix('/' . RouteHelper::parameter($this->name(), $tenancy, $value));
+            ->middleware(TenantedHelper::middleware($this->name(), $tenancy))
+            ->prefix('/' . TenantedHelper::parameter($this->name(), $tenancy, $value));
     }
 }

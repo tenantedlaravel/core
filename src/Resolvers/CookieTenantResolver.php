@@ -12,7 +12,7 @@ use Illuminate\Routing\RouteRegistrar;
 use Tenanted\Core\Contracts\ActsAsMiddleware;
 use Tenanted\Core\Contracts\Tenancy;
 use Tenanted\Core\Exceptions\TenantResolverException;
-use Tenanted\Core\Support\RouteHelper;
+use Tenanted\Core\Support\TenantedHelper;
 
 class CookieTenantResolver extends BaseTenantResolver implements ActsAsMiddleware
 {
@@ -38,7 +38,7 @@ class CookieTenantResolver extends BaseTenantResolver implements ActsAsMiddlewar
      */
     protected function getCookieName(Tenancy $tenancy): string
     {
-        return $this->cookie ?? RouteHelper::parameterName($this->name(), $tenancy->name());
+        return $this->cookie ?? TenantedHelper::parameterName($this->name(), $tenancy->name());
     }
 
     public function resolve(Request $request, Tenancy $tenancy): bool
@@ -54,7 +54,7 @@ class CookieTenantResolver extends BaseTenantResolver implements ActsAsMiddlewar
 
     public function routes(?string $tenancy = null, ?string $value = null): RouteRegistrar
     {
-        return app(Router::class)->middleware(RouteHelper::middleware($this->name(), $tenancy));
+        return app(Router::class)->middleware(TenantedHelper::middleware($this->name(), $tenancy));
     }
 
     /**

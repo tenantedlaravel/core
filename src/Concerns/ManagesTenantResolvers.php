@@ -3,9 +3,13 @@ declare(strict_types=1);
 
 namespace Tenanted\Core\Concerns;
 
+use Illuminate\Cookie\CookieJar;
 use Illuminate\Support\Str;
 use Tenanted\Core\Contracts\TenantResolver;
 use Tenanted\Core\Exceptions\TenantResolverException;
+use Tenanted\Core\Resolvers\CookieTenantResolver;
+use Tenanted\Core\Resolvers\HeaderTenantResolver;
+use Tenanted\Core\Resolvers\PathTenantResolver;
 use Tenanted\Core\Resolvers\SubdomainTenantResolver;
 
 trait ManagesTenantResolvers
@@ -136,14 +140,26 @@ trait ManagesTenantResolvers
 
     }
 
-    protected function createPathResolver(array $config, string $name)
+    protected function createPathResolver(array $config, string $name): PathTenantResolver
     {
-
+        return new PathTenantResolver($name, $config['segment'] ?? 0);
     }
 
-    protected function createHeaderResolver(array $config, string $name)
+    /**
+     * @param array  $config
+     * @param string $name
+     *
+     * @return \Tenanted\Core\Resolvers\HeaderTenantResolver
+     *
+     * @throws \Tenanted\Core\Exceptions\TenantResolverException
+     */
+    protected function createHeaderResolver(array $config, string $name): HeaderTenantResolver
     {
+        if (! isset($config['header'])) {
+            throw TenantResolverException::missingConfigValue('header', $name);
+        }
 
+        return new HeaderTenantResolver($name, $config['header']);
     }
 
     protected function createSessionResolver(array $config, string $name)
@@ -151,14 +167,15 @@ trait ManagesTenantResolvers
 
     }
 
-    protected function createCookieResolver(array $config, string $name)
+    /**
+     * @param array  $config
+     * @param string $name
+     *
+     * @return \Tenanted\Core\Resolvers\CookieTenantResolver
+     */
+    protected function createCookieResolver(array $config, string $name): CookieTenantResolver
     {
-
-    }
-
-    protected function createAuthResolver(array $config, string $name)
-    {
-
+        return new CookieTenantResolver($name, $this->app->make(CookieJar::class), $config['cookie'] ?? null);
     }
 
     /**

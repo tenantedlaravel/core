@@ -99,6 +99,8 @@ class TenantedServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->bootConsole();
         }
+
+        $this->bootFeatures();
     }
 
     private function bootConsole(): void
@@ -109,6 +111,19 @@ class TenantedServiceProvider extends ServiceProvider
             ],
             'config'
         );
+    }
+
+    private function bootFeatures(): void
+    {
+        /**
+         * @var array<class-string<\Tenanted\Core\Contracts\Feature>> $features
+         */
+        $features = config('tenanted.features', []);
+
+        foreach ($features as $feature) {
+            $this->app->make($feature)->initialise($this->app);
+            FeatureInitialised::dispatch($feature);
+        }
     }
 
     /**

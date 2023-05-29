@@ -4,6 +4,7 @@ namespace Tenanted\Core\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tenanted\Core\Contracts\ActsAsMiddleware;
 use Tenanted\Core\Exceptions\ErrantMiddlewareException;
 use Tenanted\Core\TenantedManager;
@@ -41,13 +42,20 @@ class TenantedRoutes
      * @throws \Tenanted\Core\Exceptions\TenancyException
      * @throws \Tenanted\Core\Exceptions\TenantProviderException
      * @throws \Tenanted\Core\Exceptions\TenantResolverException
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function handle(Request $request, Closure $next, ?string $tenancy = null, ?string $resolver = null): mixed
     {
+        $tenancyInstance = $this->manager->tenancy($tenancy);
+
+        if (! $tenancyInstance->check()) {
+            throw new NotFoundHttpException();
+        }
+
         $resolverInstance = $this->manager->resolver($resolver);
 
         if ($resolverInstance instanceof ActsAsMiddleware) {
-            return $resolverInstance->handle($request, $next, $this->manager->tenancy($tenancy));
+            return $resolverInstance->asMiddleware($request, $next, $tenancyInstance);
         }
 
         throw ErrantMiddlewareException::shouldNotRun(self::class, $request->route()?->getName());

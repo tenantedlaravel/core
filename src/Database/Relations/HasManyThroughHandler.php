@@ -39,6 +39,9 @@ class HasManyThroughHandler extends BaseRelationHandler
                 throw new RuntimeException('Model tenant is not current tenant');
             }
         }
+
+        // We can't check do any more checks, because the through relationships
+        // do not make it easy to work with
     }
 
     /**

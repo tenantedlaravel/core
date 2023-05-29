@@ -23,4 +23,9 @@ trait IsTenantModel
     {
         return $this->getKeyName();
     }
+
+    public function getTenantForeignKeyName(): string
+    {
+        return $this->getForeignKey();
+    }
 }
