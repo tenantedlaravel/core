@@ -3,12 +3,18 @@ declare(strict_types=1);
 
 namespace Tenanted\Core;
 
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
+use Tenanted\Core\Contracts\Tenancy as TenancyContract;
+use Tenanted\Core\Contracts\Tenant;
 use Tenanted\Core\Contracts\TenantProvider;
+use Tenanted\Core\Events\FeatureInitialised;
 use Tenanted\Core\Http\Middleware\TenantedRoutes;
+use Tenanted\Core\Listeners\RouteMatchedListener;
 
 class TenantedServiceProvider extends ServiceProvider
 {
@@ -22,6 +28,7 @@ class TenantedServiceProvider extends ServiceProvider
         $this->registerBindings();
         $this->registerMiddleware();
         $this->registerMacros();
+        $this->registerEventsAndListeners();
     }
 
     private function registerBindings(): void
@@ -69,6 +76,11 @@ class TenantedServiceProvider extends ServiceProvider
                 return $this->app->make(TenantedManager::class)->routes($resolver, $tenancy, $value);
             }
         );
+    }
+
+    private function registerEventsAndListeners(): void
+    {
+        $this->app->make(Dispatcher::class)->listen(RouteMatched::class, RouteMatchedListener::class);
     }
 
     public function boot(): void
