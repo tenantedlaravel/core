@@ -5,6 +5,7 @@ namespace Tenanted\Core\Concerns;
 
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Tenanted\Core\Contracts\TenantProvider;
 use Tenanted\Core\Exceptions\TenantProviderException;
 use Tenanted\Core\Providers\ArrayTenantProvider;
@@ -22,12 +23,12 @@ trait ManagesTenantProviders
     protected array $providers = [];
 
     /**
-     * @var array<string, \Closure(array, string): \Tenanted\Core\Contracts\TenantProvider>
+     * @var array<string, callable(array<string, mixed>, string): \Tenanted\Core\Contracts\TenantProvider>
      */
     protected array $providerCreators = [];
 
     /**
-     * @var array<string, \Closure(array): array<int, array>
+     * @var array<string, callable(array<string, mixed>): array<int, array<string, mixed>>>
      */
     protected array $sourceResolvers = [];
 
@@ -48,7 +49,7 @@ trait ManagesTenantProviders
      *
      * @param string $name
      *
-     * @return array|null
+     * @return array<string, mixed>|null
      */
     abstract protected function getProviderConfig(string $name): ?array;
 
@@ -63,6 +64,9 @@ trait ManagesTenantProviders
      */
     protected function makeProvider(string $name): TenantProvider
     {
+        /**
+         * @var array{driver: string|null}|null $config
+         */
         $config = $this->getProviderConfig($name);
 
         if ($config === null) {
@@ -75,8 +79,10 @@ trait ManagesTenantProviders
             throw TenantProviderException::missingDriver($name);
         }
 
-        if (isset($this->providerCreators[$driver])) {
-            return call_user_func($this->providerCreators[$driver], $config, $name);
+        $creator = $this->providerCreators[$driver] ?? null;
+
+        if ($creator !== null) {
+            return $creator($config, $name);
         }
 
         $method = 'create' . Str::studly($driver) . 'Provider';
@@ -111,8 +117,8 @@ trait ManagesTenantProviders
     /**
      * Register a custom tenant provider creator
      *
-     * @param string                                                           $name
-     * @param callable(array, string): \Tenanted\Core\Contracts\TenantProvider $creator
+     * @param string                                                                          $name
+     * @param callable(array<string, mixed>, string): \Tenanted\Core\Contracts\TenantProvider $creator
      *
      * @return static
      */
@@ -126,8 +132,8 @@ trait ManagesTenantProviders
     /**
      * Register a custom source resolver for the array tenant provider
      *
-     * @param string   $name
-     * @param callable $resolver
+     * @param string                                                           $name
+     * @param callable(array<string, mixed>): array<int, array<string, mixed>> $resolver
      *
      * @return static
      */
@@ -141,8 +147,8 @@ trait ManagesTenantProviders
     /**
      * Create a new eloquent tenant provider
      *
-     * @param array  $config
-     * @param string $name
+     * @param array<string, mixed> $config
+     * @param string               $name
      *
      * @return \Tenanted\Core\Providers\EloquentTenantProvider
      *
@@ -154,14 +160,18 @@ trait ManagesTenantProviders
             throw TenantProviderException::missingValue('model', $name);
         }
 
+        /**
+         * @var array{model:class-string<\Illuminate\Database\Eloquent\Model&\Tenanted\Core\Contracts\Tenant>} $config
+         */
+
         return new EloquentTenantProvider($name, $config['model']);
     }
 
     /**
      * Create a new database tenant provider
      *
-     * @param array  $config
-     * @param string $name
+     * @param array<string, mixed> $config
+     * @param string               $name
      *
      * @return \Tenanted\Core\Providers\DatabaseTenantProvider
      *
@@ -172,6 +182,10 @@ trait ManagesTenantProviders
         if (! isset($config['table'])) {
             throw TenantProviderException::missingValue('table', $name);
         }
+
+        /**
+         * @var array{table:string, connection:string|null, identifier:string|null, key:string|null, entity:class-string<\Tenanted\Core\Contracts\Tenant>|null} $config
+         */
 
         return new DatabaseTenantProvider(
             $name,
@@ -186,8 +200,8 @@ trait ManagesTenantProviders
     /**
      * Create a new array tenant provider
      *
-     * @param array  $config
-     * @param string $name
+     * @param array<string, mixed> $config
+     * @param string               $name
      *
      * @return \Tenanted\Core\Providers\ArrayTenantProvider
      *
@@ -200,11 +214,19 @@ trait ManagesTenantProviders
             throw TenantProviderException::missingValue('source', $name);
         }
 
+        /**
+         * @var array{source:array<string, mixed>} $config
+         */
+
         if (! isset($config['source']['type'])) {
             throw TenantProviderException::missingValue('source.type', $name);
         }
 
         $data = $this->getTenantsForSource($config['source']);
+
+        /**
+         * @var array{source:array{type:string}, identifier:string|null, key:string|null, entity:class-string<\Tenanted\Core\Contracts\Tenant>|null} $config
+         */
 
         return new ArrayTenantProvider(
             $name,
@@ -218,24 +240,58 @@ trait ManagesTenantProviders
     /**
      * Get a list of tenants from a given source
      *
-     * @param array $config
+     * @param array<string, mixed> $config
      *
-     * @return array<int, array>
+     * @return array<int, array<string, mixed>>
      *
      * @throws \JsonException
      */
     protected function getTenantsForSource(array $config): array
     {
-        $type = $config['type'];
+        /**
+         * @var array{type:string} $config
+         */
+        $type     = $config['type'];
+        $resolver = $this->sourceResolvers[$type] ?? null;
 
-        if (isset($this->sourceResolvers[$type])) {
-            return call_user_func($this->sourceResolvers[$type], $config);
+        if ($resolver !== null) {
+            return $resolver($config);
         }
 
-        return match ($type) {
-            'php'  => $config['data'] ?? require $config['path'],
-            'json' => json_decode($config['data'] ?? file_get_contents($config['path']), true, 512, JSON_THROW_ON_ERROR)
-        };
+        if ($type === 'php') {
+            /**
+             * @var array{type:string,data:array<int, array<string, mixed>>}|array{type:string,path:string} $config
+             */
+
+            if (isset($config['data'])) {
+                return $config['data'];
+            }
+
+            if (isset($config['path'])) {
+                return require $config['path'];
+            }
+
+            throw new \RuntimeException('No source for PHP');
+        }
+
+        if ($type === 'json') {
+            /**
+             * @var array{type:string,data:string}|array{type:string,path:string} $config
+             */
+
+            if (! isset($config['data']) && ! isset($config['path'])) {
+                throw new \RuntimeException('No data or path for json');
+            }
+
+            // @phpstan-ignore-next-line
+            return json_decode($config['data'] ?? file_get_contents($config['path']), true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        /**
+         * @var array{type:string,data:array<int, array<string, mixed>>|string|null,path:string|null} $config
+         */
+
+        throw new InvalidArgumentException('Unknown source type');
     }
 
     /**

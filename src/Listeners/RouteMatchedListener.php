@@ -39,12 +39,12 @@ class RouteMatchedListener
         }
     }
 
-    private function handleFoundMiddleware(RouteMatched $event, mixed $middleware): bool
+    private function handleFoundMiddleware(RouteMatched $event, string $middleware): bool
     {
         [, $arguments] = explode(':', $middleware);
         [$tenancyName, $resolverName] = explode(',', $arguments);
 
-        $tenancy = $this->manager->tenancy($tenancyName ?? null);
+        $tenancy = $this->manager->tenancy(empty($tenancyName) ? null : $tenancyName);
         $this->manager->stackTenancy($tenancy);
 
         if ($resolverName !== null) {

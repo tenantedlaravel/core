@@ -20,9 +20,9 @@ trait TenancyHelpers
     protected Repository $config;
 
     /**
-     * @var \Tenanted\Core\Contracts\TenantProvider|null
+     * @var \Tenanted\Core\Contracts\TenantProvider
      */
-    protected ?TenantProvider $provider;
+    protected TenantProvider $provider;
 
     /**
      * @var \Tenanted\Core\Contracts\TenantResolver|null
@@ -30,7 +30,7 @@ trait TenancyHelpers
     protected ?TenantResolver $resolver;
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function config(): array
     {

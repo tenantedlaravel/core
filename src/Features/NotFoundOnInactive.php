@@ -4,9 +4,7 @@ declare(strict_types=1);
 namespace Tenanted\Core\Features;
 
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Foundation\Application;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Tenanted\Core\Contracts\Feature;
 use Tenanted\Core\Events\TenantFound;
 
 /**
@@ -15,18 +13,17 @@ use Tenanted\Core\Events\TenantFound;
  * Feature that automatically throws an exception that will be converted
  * into a 404 response if a found tenant is inactive.
  */
-class NotFoundOnInactive implements Feature
+class NotFoundOnInactive extends BaseFeature
 {
     /**
-     * @param \Illuminate\Contracts\Foundation\Application $app
-     *
      * @return void
+     *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function initialise(Application $app): void
+    public function initialise(): void
     {
-        $app->make(Dispatcher::class)
-            ->listen(TenantFound::class, $this->notFoundIfInactive(...));
+        $this->app->make(Dispatcher::class)
+                  ->listen(TenantFound::class, $this->notFoundIfInactive(...));
     }
 
     /**
@@ -43,5 +40,10 @@ class NotFoundOnInactive implements Feature
                 sprintf('Tenant [%s] is not active', $event->tenant()->getTenantIdentifier())
             );
         }
+    }
+
+    public function boot(): void
+    {
+        // Intentionally empty
     }
 }

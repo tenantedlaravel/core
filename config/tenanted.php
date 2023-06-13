@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Project;
 use Tenanted\Core\Features;
+use Tenanted\Core\Support\TenantedHelper;
 
 return [
 
@@ -40,32 +42,8 @@ return [
 
         'project' => [
             'driver' => 'eloquent',
-            'model'  => \App\Models\Project::class,
+            'model'  => Project::class,
         ],
-
-        // Example database config
-        //
-        // 'project' => [
-        //     'driver'     => 'database',
-        //     'connection' => env('DB_CONNECTION'),
-        //     'table'      => 'organisations',
-        //     'identifier' => 'identifier',
-        //    'key'        => 'id',
-        //     'entity'     => \Tenanted\Core\Support\TenantEntity::class,
-        // ],
-
-        // Example array config
-        //
-        // 'project' => [
-        //     'driver'     => 'array',
-        //     'source'     => [
-        //         'type' => 'include',
-        //         'path' => config_path('tenants.php'),
-        //     ],
-        //     'identifier' => 'identifier',
-        //     'key'        => 'id',
-        //     'entity'     => \Tenanted\Core\Support\TenantEntity::class,
-        // ],
 
     ],
 
@@ -90,28 +68,21 @@ return [
             'domain' => env('APP_TENANT_DOMAIN', 'localhost'),
         ],
 
-        'path' => [
-            'driver'  => 'path',
-            'segment' => 1,
-        ],
-
-        'domain' => [
-            'driver' => 'domain',
-        ],
-
-        'header' => [
-            'driver' => 'header',
-        ],
-
-        'session' => [
-            'driver' => 'session',
-        ],
-
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Features
+    |--------------------------------------------------------------------------
+    |
+    | This defines the enabled features of the package.
+    |
+    */
 
     'features' => [
 
-        Features\NotFoundOnInactive::class
+        Features\NotFoundOnInactive::class,
+        Features\TenantedDatabaseConnections::class,
 
     ],
 

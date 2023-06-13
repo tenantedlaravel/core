@@ -30,6 +30,7 @@ class BelongsToManyHandler extends BaseRelationHandler
         $relationName = $this->getRelationName($model, $tenancy);
 
         if ($model->relationLoaded($relationName)) {
+            /** @var \Illuminate\Database\Eloquent\Collection<int, \Tenanted\Core\Contracts\Tenant&\Illuminate\Database\Eloquent\Model> $loaded */
             $loaded = $model->getRelation($relationName);
 
             // If there are already a few tenants, and none are the current one,
@@ -73,7 +74,7 @@ class BelongsToManyHandler extends BaseRelationHandler
     public function populateAfterLoading(Model $model, Tenancy $tenancy): void
     {
         /**
-         * @var \Tenanted\Core\Contracts\Tenant|\Illuminate\Database\Eloquent\Model|null $tenant
+         * @var (\Tenanted\Core\Contracts\Tenant&\Illuminate\Database\Eloquent\Model)|null $tenant
          */
         $tenant = $tenancy->tenant();
 
@@ -86,7 +87,12 @@ class BelongsToManyHandler extends BaseRelationHandler
         $relationName = $this->getRelationName($model, $tenancy);
 
         if ($model->relationLoaded($relationName)) {
-            if (! $model->getRelation($relationName)->pluck($tenant->getTenantKeyName())->contains($tenant->getTenantKey())) {
+            /** @var \Tenanted\Core\Contracts\Tenant&\Illuminate\Database\Eloquent\Model $loaded */
+            $loaded = $model->getRelation($relationName);
+            /** @var \Illuminate\Database\Eloquent\Collection<int, \Tenanted\Core\Contracts\Tenant&\Illuminate\Database\Eloquent\Model> $relations */
+            $relations = $loaded->getRelation($relationName);
+
+            if (! $relations->pluck($tenant->getTenantKeyName())->contains($tenant->getTenantKey())) {
                 throw new RuntimeException('Returned model does not belong to the current tenant');
             }
         } else {
@@ -95,16 +101,16 @@ class BelongsToManyHandler extends BaseRelationHandler
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model   $model
-     * @param \Tenanted\Core\Contracts\Tenancy      $tenancy
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param \Illuminate\Database\Eloquent\Model                                        $model
+     * @param \Tenanted\Core\Contracts\Tenancy                                           $tenancy
+     * @param \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model> $builder
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model>
      */
     public function scopeForQuery(Model $model, Tenancy $tenancy, Builder $builder): Builder
     {
         /**
-         * @var \Tenanted\Core\Contracts\Tenant|\Illuminate\Database\Eloquent\Model|null $tenant
+         * @var (\Tenanted\Core\Contracts\Tenant&\Illuminate\Database\Eloquent\Model)|null $tenant
          */
         $tenant = $tenancy->tenant();
 
@@ -113,7 +119,7 @@ class BelongsToManyHandler extends BaseRelationHandler
         }
 
         $relationName = $this->getRelationName($model, $tenancy);
-        /** @var \Illuminate\Database\Eloquent\Relations\BelongsToMany $relation */
+        /** @var \Illuminate\Database\Eloquent\Relations\BelongsToMany<\Illuminate\Database\Eloquent\Model> $relation */
         $relation = $model->{$relationName}();
 
         return $builder->whereHas($relationName, function (Builder $builder) use ($tenant, $relation) {

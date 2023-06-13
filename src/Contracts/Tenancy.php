@@ -22,7 +22,7 @@ interface Tenancy
     /**
      * Get the tenancy config
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function config(): array;
 
@@ -30,6 +30,9 @@ interface Tenancy
      * Determine if there is a current tenant
      *
      * @return bool
+     *
+     * @phpstan-assert-if-true Tenant $this->tenant()
+     * @phpstan-assert-if-false null $this->tenant()
      */
     public function check(): bool;
 

@@ -55,7 +55,7 @@ trait ManagesTenancyState
     /**
      * @param \Tenanted\Core\Contracts\Tenant|null $tenant
      *
-     * @return Tenancy
+     * @return static
      */
     public function setTenant(?Tenant $tenant): static
     {

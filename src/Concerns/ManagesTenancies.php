@@ -15,7 +15,7 @@ trait ManagesTenancies
     protected array $tenancies = [];
 
     /**
-     * @var array<string, \Closure(array, string): \Tenanted\Core\Contracts\Tenancy>
+     * @var array<string, callable(array<string, mixed>, string): \Tenanted\Core\Contracts\Tenancy>
      */
     protected array $tenancyCreators = [];
 
@@ -60,9 +60,15 @@ trait ManagesTenancies
             throw TenancyException::missingConfig($name);
         }
 
-        if (isset($this->tenancyCreators[$name])) {
-            return call_user_func($this->tenancyCreators[$name], $config, $name);
+        $creator = $this->tenancyCreators[$name] ?? null;
+
+        if ($creator !== null) {
+            return $creator($config, $name);
         }
+
+        /**
+         * @var array{provider?:string|null} $config
+         */
 
         $provider   = $this->provider($config['provider'] ?? null);
         $configRepo = new Repository($config);
@@ -73,8 +79,11 @@ trait ManagesTenancies
             $configRepo
         );
 
-        if ($configRepo->has('resolver') && $configRepo->get('resolver') !== null) {
-            $tenancy->use($this->resolver($configRepo['resolver']));
+        /** @var string|null $resolver */
+        $resolver = $configRepo->get('resolver');
+
+        if ($resolver !== null) {
+            $tenancy->use($this->resolver($resolver));
         }
 
         return $tenancy;
@@ -115,7 +124,7 @@ trait ManagesTenancies
      * Register a custom tenancy creator
      *
      * @param string                                                    $name
-     * @param callable(array, string): \Tenanted\Core\Contracts\Tenancy $creator
+     * @param callable(array<string, mixed>, string): \Tenanted\Core\Contracts\Tenancy $creator
      *
      * @return static
      */
@@ -143,7 +152,7 @@ trait ManagesTenancies
     /**
      * Get the current tenancy stack
      *
-     * @return list<\Tenanted\Core\Contracts\TenantProvider>
+     * @return list<\Tenanted\Core\Contracts\Tenancy>
      */
     public function tenancyStack(): array
     {

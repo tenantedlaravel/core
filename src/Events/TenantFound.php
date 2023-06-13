@@ -27,17 +27,27 @@ abstract class TenantFound extends TenancyEvent
      */
     private Tenant $tenant;
 
+    /**
+     * @param \Tenanted\Core\Contracts\Tenant  $tenant
+     * @param \Tenanted\Core\Contracts\Tenancy $tenancy
+     */
     public function __construct(Tenant $tenant, Tenancy $tenancy)
     {
         parent::__construct($tenancy);
         $this->tenant = $tenant;
     }
 
+    /**
+     * @return \Tenanted\Core\Contracts\Tenant
+     */
     public function tenant(): Tenant
     {
         return $this->tenant;
     }
 
+    /**
+     * @return string
+     */
     public function via(): string
     {
         return $this->tenancy()->identifiedVia();

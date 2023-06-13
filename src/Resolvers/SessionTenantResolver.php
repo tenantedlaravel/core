@@ -13,6 +13,9 @@ use Tenanted\Core\Contracts\Tenancy;
 use Tenanted\Core\Exceptions\TenantResolverException;
 use Tenanted\Core\Support\TenantedHelper;
 
+/**
+ *
+ */
 class SessionTenantResolver extends BaseTenantResolver implements ActsAsMiddleware
 {
     /**
@@ -20,14 +23,32 @@ class SessionTenantResolver extends BaseTenantResolver implements ActsAsMiddlewa
      */
     private Session $session;
 
+    /**
+     * @var string|null
+     */
     private ?string $sessionName;
 
+    /**
+     * @param string                                $name
+     * @param \Illuminate\Contracts\Session\Session $session
+     * @param string|null                           $sessionName
+     */
     public function __construct(string $name, Session $session, ?string $sessionName = null)
     {
         parent::__construct($name);
 
         $this->session     = $session;
-        $this->sessionname = $sessionName;
+        $this->sessionName = $sessionName;
+    }
+
+    /**
+     * @param string $sessionName
+     *
+     * @return string|null
+     */
+    private function getIdentifierFromSession(string $sessionName): ?string
+    {
+        return $this->session->get($sessionName);
     }
 
     /**
@@ -40,17 +61,31 @@ class SessionTenantResolver extends BaseTenantResolver implements ActsAsMiddlewa
         return $this->sessionName ?? TenantedHelper::parameterName($this->name(), $tenancy->name());
     }
 
+    /**
+     * @param \Illuminate\Http\Request         $request
+     * @param \Tenanted\Core\Contracts\Tenancy $tenancy
+     *
+     * @return bool
+     * @throws \Tenanted\Core\Exceptions\TenantResolverException
+     */
     public function resolve(Request $request, Tenancy $tenancy): bool
     {
         $sessionName = $this->getSessionName($tenancy);
+        $identifier  = $this->getIdentifierFromSession($sessionName);
 
-        if (! $this->session->has($sessionName)) {
+        if ($identifier === null) {
             throw TenantResolverException::noIdentifier('session', $sessionName, $this->name());
         }
 
-        return $this->handleIdentifier($tenancy, $this->session->get($sessionName));
+        return $this->handleIdentifier($tenancy, $identifier);
     }
 
+    /**
+     * @param string|null $tenancy
+     * @param string|null $value
+     *
+     * @return \Illuminate\Routing\RouteRegistrar
+     */
     public function routes(?string $tenancy = null, ?string $value = null): RouteRegistrar
     {
         return app(Router::class)->middleware(TenantedHelper::middleware($this->name(), $tenancy));

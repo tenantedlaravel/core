@@ -29,7 +29,7 @@ interface TenantResolver
      * @param \Illuminate\Http\Request         $request
      * @param \Tenanted\Core\Contracts\Tenancy $tenancy
      *
-     * @return mixed
+     * @return bool
      *
      * @throws \Tenanted\Core\Exceptions\TenantResolverException
      */

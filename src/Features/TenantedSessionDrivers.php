@@ -5,17 +5,25 @@ namespace Tenanted\Core\Features;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Session\EncryptedStore;
 use Illuminate\Session\SessionManager;
 use Illuminate\Session\Store;
 use SessionHandlerInterface;
-use Tenanted\Core\Contracts\Feature;
 use Tenanted\Core\Services\Session\TenantedDatabaseSessionHandler;
 use Tenanted\Core\TenantedManager;
 
-class SessionDrivers implements Feature
+class TenantedSessionDrivers extends BaseFeature
 {
+    /**
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     *
+     * @return void
+     */
+    public function initialise(): void
+    {
+        // Intentionally empty
+    }
+
     /**
      * @param \Illuminate\Contracts\Foundation\Application $app
      *
@@ -23,18 +31,17 @@ class SessionDrivers implements Feature
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function initialise(Application $app): void
+    public function boot(): void
     {
-        $sessionManager = $app->make(SessionManager::class);
-
-        $sessionManager->extend('tenanted:file', $this->createFileDriver(...))
-                       ->extend('tenanted:cookie', $this->createCookieDriver(...))
-                       ->extend('tenanted:database', $this->createDatabaseDriver(...))
-                       ->extend('tenanted:apc', $this->createApcDriver(...))
-                       ->extend('tenanted:memcached', $this->createMemcachedDriver(...))
-                       ->extend('tenanted:redis', $this->createRedisDriver(...))
-                       ->extend('tenanted:dynamodb', $this->createDynamodbDriver(...))
-                       ->extend('tenanted:array', $this->createArrayDriver(...));
+        $this->app->make(SessionManager::class)
+                  ->extend('tenanted:file', $this->createFileDriver(...))
+                  ->extend('tenanted:cookie', $this->createCookieDriver(...))
+                  ->extend('tenanted:database', $this->createDatabaseDriver(...))
+                  ->extend('tenanted:apc', $this->createApcDriver(...))
+                  ->extend('tenanted:memcached', $this->createMemcachedDriver(...))
+                  ->extend('tenanted:redis', $this->createRedisDriver(...))
+                  ->extend('tenanted:dynamodb', $this->createDynamodbDriver(...))
+                  ->extend('tenanted:array', $this->createArrayDriver(...));
     }
 
     protected function createFileDriver(Container $container): EncryptedStore|Store
@@ -49,6 +56,7 @@ class SessionDrivers implements Feature
 
     protected function createDatabaseDriver(Container $container): EncryptedStore|Store
     {
+        /** @var \Illuminate\Contracts\Config\Repository $config */
         $config  = $container->make('config');
         $handler = new TenantedDatabaseSessionHandler(
             $container->make(TenantedManager::class),

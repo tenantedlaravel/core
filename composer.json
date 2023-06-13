@@ -7,7 +7,10 @@
     "laravel/framework": "^10.0"
   },
   "require-dev"      : {
-    "marcocesarato/php-conventional-changelog": "^1.17"
+    "marcocesarato/php-conventional-changelog": "^1.17",
+    "orchestra/testbench"                     : "^8.5",
+    "nunomaduro/larastan"                     : "^2.0",
+    "psalm/plugin-laravel"                    : "^2.8"
   },
   "license"          : "MIT",
   "autoload"         : {
@@ -28,13 +31,14 @@
   ],
   "minimum-stability": "stable",
   "scripts"          : {
-    "changelog"    : "conventional-changelog",
-    "release"      : "conventional-changelog --commit",
-    "release:patch": "conventional-changelog --patch --commit",
-    "release:minor": "conventional-changelog --minor --commit",
-    "release:major": "conventional-changelog --major --commit"
+    "post-autoload-dump": "@php vendor/bin/testbench package:discover --ansi",
+    "changelog"         : "conventional-changelog",
+    "release"           : "conventional-changelog --commit",
+    "release:patch"     : "conventional-changelog --patch --commit",
+    "release:minor"     : "conventional-changelog --minor --commit",
+    "release:major"     : "conventional-changelog --major --commit"
   },
-  "extra": {
+  "extra"            : {
     "laravel": {
       "providers": [
         "Tenanted\\Core\\TenantedServiceProvider"

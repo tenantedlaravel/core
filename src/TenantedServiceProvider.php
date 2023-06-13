@@ -12,6 +12,7 @@ use Illuminate\Support\ServiceProvider;
 use Tenanted\Core\Contracts\Tenancy as TenancyContract;
 use Tenanted\Core\Contracts\Tenant;
 use Tenanted\Core\Contracts\TenantProvider;
+use Tenanted\Core\Events\FeatureBooted;
 use Tenanted\Core\Events\FeatureInitialised;
 use Tenanted\Core\Http\Middleware\TenantedRoutes;
 use Tenanted\Core\Listeners\RouteMatchedListener;
@@ -29,6 +30,7 @@ class TenantedServiceProvider extends ServiceProvider
         $this->registerMiddleware();
         $this->registerMacros();
         $this->registerEventsAndListeners();
+        $this->initialiseFeatures();
     }
 
     private function registerBindings(): void
@@ -94,6 +96,22 @@ class TenantedServiceProvider extends ServiceProvider
         $this->app->make(Dispatcher::class)->listen(RouteMatched::class, RouteMatchedListener::class);
     }
 
+    private function initialiseFeatures(): void
+    {
+        /**
+         * @var array<class-string<\Tenanted\Core\Contracts\Feature>> $features
+         */
+        $features = config('tenanted.features', []);
+
+        foreach ($features as $feature) {
+            $this->app->make($feature)
+                      ->setApplication($this->app)
+                      ->initialise();
+
+            FeatureInitialised::dispatch($feature);
+        }
+    }
+
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
@@ -121,8 +139,8 @@ class TenantedServiceProvider extends ServiceProvider
         $features = config('tenanted.features', []);
 
         foreach ($features as $feature) {
-            $this->app->make($feature)->initialise($this->app);
-            FeatureInitialised::dispatch($feature);
+            $this->app->make($feature)->boot();
+            FeatureBooted::dispatch($feature);
         }
     }
 

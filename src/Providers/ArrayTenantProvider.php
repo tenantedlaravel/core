@@ -18,7 +18,7 @@ class ArrayTenantProvider implements TenantProvider
     private string $name;
 
     /**
-     * @var array<int, array>
+     * @var array<int, array<string, mixed>>
      */
     private array $tenants;
 
@@ -49,7 +49,7 @@ class ArrayTenantProvider implements TenantProvider
 
     /**
      * @param string                                        $name
-     * @param array                                         $tenants
+     * @param array<array<string, mixed>>                   $tenants
      * @param string                                        $identifier
      * @param string                                        $key
      * @param class-string<\Tenanted\Core\Contracts\Tenant> $entity
@@ -57,16 +57,16 @@ class ArrayTenantProvider implements TenantProvider
     public function __construct(
         string $name,
         array  $tenants,
-        string $identifier = 'identifier',
-        string $key = 'id',
-        string $entity = TenantEntity::class
+        ?string $identifier = 'identifier',
+        ?string $key = 'id',
+        ?string $entity = TenantEntity::class
     )
     {
         $this->name       = $name;
         $this->tenants    = array_values($tenants);
-        $this->identifier = $identifier;
-        $this->key        = $key;
-        $this->entity     = $entity;
+        $this->identifier = $identifier ?? 'identifier';
+        $this->key        = $key ?? 'id';
+        $this->entity     = $entity ?? TenantEntity::class;
 
         $this->mapTenants();
     }
@@ -81,7 +81,7 @@ class ArrayTenantProvider implements TenantProvider
                 // TODO: Throw an exception
             }
 
-            $this->tenantIdentifierMap[$tenant[$this->identifier]] = $index;
+            $this->tenantIdentifierMap[$tenant[$this->identifier]] = $index; // @phpstan-ignore-line
             $this->tenantKeyMap[$tenant[$this->key]]               = $index;
         }
     }

@@ -27,7 +27,7 @@ class HeaderTenantResolver extends BaseTenantResolver implements ActsAsMiddlewar
 
     protected function getHeaderName(Tenancy $tenancy): string
     {
-        return $this->header ?? Str::ucfirst($tenancy->name);
+        return $this->header ?? Str::ucfirst($tenancy->name());
     }
 
     public function resolve(Request $request, Tenancy $tenancy): bool
@@ -60,7 +60,7 @@ class HeaderTenantResolver extends BaseTenantResolver implements ActsAsMiddlewar
         if ($response instanceof Response && $tenancy->resolver() === $this && $tenancy->check()) {
             return $response->header(
                 $this->getHeaderName($tenancy),
-                $tenancy->identifiedUsing()
+                $tenancy->identifiedUsing() // @phpstan-ignore-line
             );
         }
 

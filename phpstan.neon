@@ -1,0 +1,38 @@
+includes:
+  - ./vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+
+  paths:
+    - src/
+
+  level: 9
+
+  ignoreErrors:
+    - message: '#Method Tenanted\\Core\\TenantedManager::getDefault([a-zA-Z]*)Name\(\) should return string but returns mixed#'
+      path: src/TenantedManager.php
+    - message: '#Method Tenanted\\Core\\TenantedManager::get([a-zA-Z]*)Config\(\) should return array\|null but returns mixed#'
+      path: src/TenantedManager.php
+    - message: '#Method Tenanted\\Core\\Resolvers\\SessionTenantResolver::getIdentifierFromSession\(\) should return string\|null but returns mixed#'
+      path: src/Resolvers/SessionTenantResolver.php
+    - message: '#Method Tenanted\\Core\\Providers\\EloquentTenantProvider::getModel\(\) should return M of Illuminate\\Database\\Eloquent\\Model&Tenanted\\Core\\Contracts\\Tenant but returns Illuminate\\Database\\Eloquent\\Model&Tenanted\\Core\\Contracts\\Tenant#'
+      path: src/Providers/EloquentTenantProvider.php
+    - message: '#Method Tenanted\\Core\\Providers\\EloquentTenantProvider::retrieveBy\(\) should return \(M of Illuminate\\Database\\Eloquent\\Model&Tenanted\\Core\\Contracts\\Tenant\)\|null but returns Illuminate\\Database\\Eloquent\\Model\|null#'
+      path: src/Providers/EloquentTenantProvider.php
+    - message: '#Method Tenanted\\Core\\Events\\TenantFound::via\(\) should return string but returns string\|null#'
+      path: src/Events/TenantFound.php
+    - message: '#Method Tenanted\\Core\\Tenancy::identifiedUsing\(\) should return string\|null but returns mixed#'
+      path: src/Concerns/ManagesTenancyState.php
+
+  excludePaths:
+    - './src/Features/*'
+
+  checkGenericClassInNonGenericObjectType: false
+
+  #    ignoreErrors:
+  #        - '#PHPDoc tag @var#'
+  #
+  #    excludePaths:
+  #        - ./*/*/FileToBeExcluded.php
+  #
+  #    checkMissingIterableValueType: false

@@ -30,6 +30,7 @@ class BelongsToHandler extends BaseRelationHandler
         $relationName = $this->getRelationName($model, $tenancy);
 
         if ($model->relationLoaded($relationName)) {
+            /** @var \Tenanted\Core\Contracts\Tenant&\Illuminate\Database\Eloquent\Model $loaded */
             $loaded = $model->getRelation($relationName);
 
             // If there's already a tenant, and it isn't the current one, there's
@@ -94,14 +95,14 @@ class BelongsToHandler extends BaseRelationHandler
     /**
      * @param \Illuminate\Database\Eloquent\Model   $model
      * @param \Tenanted\Core\Contracts\Tenancy      $tenancy
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model> $builder
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model>
      */
     public function scopeForQuery(Model $model, Tenancy $tenancy, Builder $builder): Builder
     {
         /**
-         * @var \Tenanted\Core\Contracts\Tenant|\Illuminate\Database\Eloquent\Model|null $tenant
+         * @var (\Tenanted\Core\Contracts\Tenant&\Illuminate\Database\Eloquent\Model)|null $tenant
          */
         $tenant = $tenancy->tenant();
 

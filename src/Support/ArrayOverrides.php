@@ -26,6 +26,9 @@ final class ArrayOverrides
     /**
      * @param string[]|empty $allow
      * @param string[]|empty $disallow
+     *
+     * @phpstan-param string[]|array{} $allow
+     * @phpstan-param string[]|array{} $disallow
      */
     public function __construct(array $allow = ['*'], array $disallow = [])
     {
@@ -100,10 +103,10 @@ final class ArrayOverrides
     /**
      * Clean the data by filtering through the allows and disallows
      *
-     * @param array $data
+     * @param array<string, array<mixed>|string> $data
      * @param bool  $undot
      *
-     * @return array
+     * @return array<string, array<mixed>|string>|array<string, mixed>
      */
     public function clean(array $data, bool $undot = true): array
     {
@@ -125,10 +128,10 @@ final class ArrayOverrides
     /**
      * Clean an array and merge it into another
      *
-     * @param array $original
-     * @param array $new
+     * @param array<string, array<mixed>|string> $original
+     * @param array<string, array<mixed>|string> $new
      *
-     * @return array
+     * @return array<string, array<mixed>|string>|array<string, mixed>
      */
     public function override(array $original, array $new): array
     {

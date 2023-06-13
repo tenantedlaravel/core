@@ -55,17 +55,17 @@ class DatabaseTenantProvider implements TenantProvider
         string              $name,
         ConnectionInterface $connection,
         string              $table,
-        string              $identifier = 'identifier',
-        string              $key = 'id',
-        string              $entity = TenantEntity::class
+        ?string             $identifier = 'identifier',
+        ?string             $key = 'id',
+        ?string             $entity = TenantEntity::class
     )
     {
         $this->name       = $name;
         $this->connection = $connection;
         $this->table      = $table;
-        $this->identifier = $identifier;
-        $this->key        = $key;
-        $this->entity     = $entity;
+        $this->identifier = $identifier ?? 'identifier';
+        $this->key        = $key ?? 'id';
+        $this->entity     = $entity ?? TenantEntity::class;
     }
 
     /**
@@ -141,7 +141,7 @@ class DatabaseTenantProvider implements TenantProvider
         return new $entity(
             $this->identifier,
             $this->key,
-            (array) $data
+            (array)$data
         );
     }
 }

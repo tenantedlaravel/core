@@ -24,7 +24,8 @@ final class NoRelationHandler extends BaseRelationHandler
      */
     private function getAttributeName(Model $model): string
     {
-        /** @var \Tenanted\Core\Concerns\OwnedByTenant $model */
+        // @phpstan-ignore-next-line
+        /** @var \Illuminate\Database\Eloquent\Model&\Tenanted\Core\Concerns\OwnedByTenant $model */
         return $model->getTenantRelatedKeyName();
     }
 
@@ -66,21 +67,16 @@ final class NoRelationHandler extends BaseRelationHandler
     /**
      * @param \Illuminate\Database\Eloquent\Model   $model
      * @param \Tenanted\Core\Contracts\Tenancy      $tenancy
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model> $builder
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model>
      */
     public function scopeForQuery(Model $model, Tenancy $tenancy, Builder $builder): Builder
     {
-        /**
-         * @var \Tenanted\Core\Contracts\Tenant|\Illuminate\Database\Eloquent\Model|null $tenant
-         */
-        $tenant = $tenancy->tenant();
-
-        if ($tenant === null) {
+        if (! $tenancy->check()) {
             return $builder;
         }
 
-        return $builder->where($this->getAttributeName($model), '=', $tenant->getTenantKey());
+        return $builder->where($this->getAttributeName($model), '=', $tenancy->key());
     }
 }

@@ -21,7 +21,6 @@ class PathTenantResolver extends ParameterTenantResolver
     /**
      * @param string      $name
      * @param int         $segment
-     * @param string|null $prefix
      */
     public function __construct(string $name, int $segment = 0)
     {

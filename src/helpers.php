@@ -7,5 +7,5 @@ namespace Tenanted\Core;
  */
 function tenanted(): TenantedManager
 {
-    return app(TenantedManager::class);
+    return app()->make(TenantedManager::class);
 }

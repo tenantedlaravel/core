@@ -67,6 +67,7 @@ final class Tenancy implements Contracts\Tenancy
         }
 
         if ($tenant !== null) {
+            /** @var string $name */
             $this->setVia($name, $identifier);
             TenantIdentified::dispatch($tenant, $this);
         }

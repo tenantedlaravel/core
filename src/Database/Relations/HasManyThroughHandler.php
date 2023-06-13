@@ -29,13 +29,14 @@ class HasManyThroughHandler extends BaseRelationHandler
         $relationName = $this->getRelationName($model, $tenancy);
 
         if ($model->relationLoaded($relationName)) {
-            $loaded = $model->getRelation($relationName);
+            $loaded      = $model->getRelation($relationName);
+            $tenantClass = $tenant::class;
 
             if ($loaded instanceof Collection) {
                 if (! $loaded->pluck($tenant->getTenantKeyName())->contains($tenant->getTenantKey())) {
                     throw new RuntimeException('Model tenant is not current tenant');
                 }
-            } else if (($loaded instanceof $tenant::class) && $loaded->getTenantKey() !== $tenant->getTenantKey()) {
+            } else if (($loaded instanceof $tenantClass) && $loaded->getTenantKey() !== $tenant->getTenantKey()) {
                 throw new RuntimeException('Model tenant is not current tenant');
             }
         }
@@ -81,14 +82,14 @@ class HasManyThroughHandler extends BaseRelationHandler
     /**
      * @param \Illuminate\Database\Eloquent\Model   $model
      * @param \Tenanted\Core\Contracts\Tenancy      $tenancy
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model> $builder
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model>
      */
     public function scopeForQuery(Model $model, Tenancy $tenancy, Builder $builder): Builder
     {
         /**
-         * @var \Tenanted\Core\Contracts\Tenant|\Illuminate\Database\Eloquent\Model|null $tenant
+         * @var (\Tenanted\Core\Contracts\Tenant&\Illuminate\Database\Eloquent\Model)|null $tenant
          */
         $tenant = $tenancy->tenant();
 
@@ -97,7 +98,7 @@ class HasManyThroughHandler extends BaseRelationHandler
         }
 
         $relationName = $this->getRelationName($model, $tenancy);
-        /** @var \Illuminate\Database\Eloquent\Relations\BelongsToMany $relation */
+        /** @var \Illuminate\Database\Eloquent\Relations\BelongsToMany<\Illuminate\Database\Eloquent\Model> $relation */
         $relation = $model->{$relationName}();
 
         return $builder->whereHas($relationName, function (Builder $builder) use ($tenant, $relation) {

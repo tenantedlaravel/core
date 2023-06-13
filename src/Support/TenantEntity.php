@@ -10,56 +10,111 @@ use Tenanted\Core\Contracts\Tenant;
  */
 class TenantEntity implements Tenant
 {
+    /**
+     * @var string
+     */
     private string $identifier;
 
-    private mixed $key;
+    /**
+     * @var string
+     */
+    private string $key;
 
+    /**
+     * @var mixed[]
+     */
     private array $attributes;
 
-    public function __construct(string $identifier, mixed $key, array $attributes)
+    /**
+     * @param string  $identifier
+     * @param string  $key
+     * @param mixed[] $attributes
+     */
+    public function __construct(string $identifier, string $key, array $attributes)
     {
         $this->identifier = $identifier;
         $this->key        = $key;
         $this->attributes = $attributes;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return mixed|null
+     */
     public function __get(string $name)
     {
         return $this->attributes[$name] ?? null;
     }
 
+    /**
+     * @param string $name
+     * @param mixed  $value
+     *
+     * @return void
+     */
     public function __set(string $name, $value): void
     {
         // Intentionally empty
     }
 
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
     public function __isset(string $name): bool
     {
         return isset($this->attributes[$name]);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return void
+     */
     public function __unset(string $name): void
     {
         // Intentionally empty
     }
 
+    /**
+     * @return string
+     */
     public function getTenantIdentifier(): string
     {
         return $this->{$this->getTenantIdentifierName()};
     }
 
+    /**
+     * @return string
+     */
     public function getTenantIdentifierName(): string
     {
         return $this->identifier;
     }
 
+    /**
+     * @return mixed
+     */
     public function getTenantKey(): mixed
     {
         return $this->{$this->getTenantKeyName()};
     }
 
+    /**
+     * @return string
+     */
     public function getTenantKeyName(): string
     {
         return $this->key;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTenantActive(): bool
+    {
+        return (bool) $this->__get('active');
     }
 }

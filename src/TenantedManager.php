@@ -39,7 +39,7 @@ final class TenantedManager
     /**
      * @param string $name
      *
-     * @return array|null
+     * @return mixed[]|null
      */
     protected function getProviderConfig(string $name): ?array
     {
@@ -57,7 +57,7 @@ final class TenantedManager
     /**
      * @param string $name
      *
-     * @return array|null
+     * @return mixed[]|null
      */
     protected function getTenancyConfig(string $name): ?array
     {
@@ -75,7 +75,7 @@ final class TenantedManager
     /**
      * @param string $name
      *
-     * @return array|null
+     * @return mixed[]|null
      */
     protected function getResolverConfig(string $name): ?array
     {

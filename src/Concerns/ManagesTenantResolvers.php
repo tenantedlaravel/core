@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tenanted\Core\Concerns;
 
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Cookie\CookieJar;
 use Illuminate\Support\Str;
 use Tenanted\Core\Contracts\TenantResolver;
@@ -10,8 +11,11 @@ use Tenanted\Core\Exceptions\TenantResolverException;
 use Tenanted\Core\Resolvers\CookieTenantResolver;
 use Tenanted\Core\Resolvers\HeaderTenantResolver;
 use Tenanted\Core\Resolvers\PathTenantResolver;
+use Tenanted\Core\Resolvers\SessionTenantResolver;
 use Tenanted\Core\Resolvers\SubdomainTenantResolver;
 
+/**
+ */
 trait ManagesTenantResolvers
 {
     /**
@@ -20,7 +24,7 @@ trait ManagesTenantResolvers
     protected array $resolvers = [];
 
     /**
-     * @var array<string, \Closure(array, string): \Tenanted\Core\Contracts\TenantResolver>
+     * @var array<string, callable(array<string, mixed>, string): \Tenanted\Core\Contracts\TenantResolver>
      */
     protected array $resolverCreators = [];
 
@@ -57,6 +61,9 @@ trait ManagesTenantResolvers
      */
     protected function makeTenantResolver(string $name): TenantResolver
     {
+        /**
+         * @var array{driver: string|null}|null $config
+         */
         $config = $this->getResolverConfig($name);
 
         if ($config === null) {
@@ -69,8 +76,10 @@ trait ManagesTenantResolvers
             throw TenantResolverException::missingDriver($name);
         }
 
-        if (isset($this->resolverCreators[$driver])) {
-            return call_user_func($this->resolverCreators[$driver], $config, $name);
+        $creator = $this->resolverCreators[$driver] ?? null;
+
+        if ($creator !== null) {
+            return $creator($config, $name);
         }
 
         $method = 'create' . Str::studly($driver) . 'Resolver';
@@ -106,8 +115,8 @@ trait ManagesTenantResolvers
     /**
      * Register a custom resolver creator
      *
-     * @param string                                                           $name
-     * @param callable(array, string): \Tenanted\Core\Contracts\TenantResolver $creator
+     * @param string                                                                          $name
+     * @param callable(array<string, mixed>, string): \Tenanted\Core\Contracts\TenantResolver $creator
      *
      * @return static
      */
@@ -119,8 +128,8 @@ trait ManagesTenantResolvers
     }
 
     /**
-     * @param array  $config
-     * @param string $name
+     * @param array<string, mixed> $config
+     * @param string               $name
      *
      * @return \Tenanted\Core\Resolvers\SubdomainTenantResolver
      *
@@ -132,49 +141,70 @@ trait ManagesTenantResolvers
             throw TenantResolverException::missingConfigValue('domain', $name);
         }
 
+        /**
+         * @var array{domain:string} $config
+         */
+
         return new SubdomainTenantResolver($name, $config['domain']);
     }
 
-    protected function createDomainResolver(array $config, string $name)
-    {
-
-    }
-
+    /**
+     * @param array<string, mixed> $config
+     * @param string               $name
+     *
+     * @return \Tenanted\Core\Resolvers\PathTenantResolver
+     */
     protected function createPathResolver(array $config, string $name): PathTenantResolver
     {
+        /**
+         * @var array{segment:int|null} $config
+         */
+
         return new PathTenantResolver($name, $config['segment'] ?? 0);
     }
 
     /**
-     * @param array  $config
-     * @param string $name
+     * @param array<string, mixed> $config
+     * @param string               $name
      *
      * @return \Tenanted\Core\Resolvers\HeaderTenantResolver
-     *
-     * @throws \Tenanted\Core\Exceptions\TenantResolverException
      */
     protected function createHeaderResolver(array $config, string $name): HeaderTenantResolver
     {
-        if (! isset($config['header'])) {
-            throw TenantResolverException::missingConfigValue('header', $name);
-        }
+        /**
+         * @var array{header:string|null} $config
+         */
 
-        return new HeaderTenantResolver($name, $config['header']);
-    }
-
-    protected function createSessionResolver(array $config, string $name)
-    {
-
+        return new HeaderTenantResolver($name, $config['header'] ?? null);
     }
 
     /**
-     * @param array  $config
-     * @param string $name
+     * @param array<string, mixed> $config
+     * @param string               $name
+     *
+     * @return \Tenanted\Core\Resolvers\SessionTenantResolver
+     */
+    protected function createSessionResolver(array $config, string $name): SessionTenantResolver
+    {
+        /**
+         * @var array{session:string|null} $config
+         */
+
+        return new SessionTenantResolver($name, $this->app->make(Session::class), $config['session'] ?? null);
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     * @param string               $name
      *
      * @return \Tenanted\Core\Resolvers\CookieTenantResolver
      */
     protected function createCookieResolver(array $config, string $name): CookieTenantResolver
     {
+        /**
+         * @var array{cookie:string|null} $config
+         */
+
         return new CookieTenantResolver($name, $this->app->make(CookieJar::class), $config['cookie'] ?? null);
     }
 

@@ -10,7 +10,6 @@ use Tenanted\Core\Contracts\Tenancy;
 use Tenanted\Core\TenantedManager;
 
 /**
- *
  */
 class OwnedByTenantScope implements Scope
 {
@@ -42,15 +41,15 @@ class OwnedByTenantScope implements Scope
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @param \Illuminate\Database\Eloquent\Model   $model
+     * @param \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model> $builder
+     * @param \Illuminate\Database\Eloquent\Model      $model
      *
      * @return void
      */
     public function apply(Builder $builder, Model $model): void
     {
-        /** @var \Tenanted\Core\Concerns\OwnedByTenant $model */
-
+        // @phpstan-ignore-next-line
+        /** @var \Illuminate\Database\Eloquent\Model&\Tenanted\Core\Concerns\OwnedByTenant $model */
         $handler = $model->getTenantRelationHandler();
 
         if ($handler === null) {
@@ -63,7 +62,8 @@ class OwnedByTenantScope implements Scope
     /**
      * Extend the query builder with the needed functions.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model> $builder
+     *
      * @return void
      */
     public function extend(Builder $builder): void

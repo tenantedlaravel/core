@@ -27,6 +27,7 @@ abstract class ParameterTenantResolver extends BaseTenantResolver implements Act
     {
         $route     = $request->route();
         $parameter = TenantedHelper::parameterName($this->name(), $tenancy->name());
+        $binding   = null;
 
         if ($route === null || ! $route->hasParameter($parameter)) {
             $identifier = $this->fallbackResolution($request);
@@ -34,13 +35,16 @@ abstract class ParameterTenantResolver extends BaseTenantResolver implements Act
             $identifier = $route->parameter($parameter);
         }
 
-        if ($identifier === null) {
+        if (! is_string($identifier)) {
             throw TenantResolverException::missingIdentifier();
         }
 
-        $route->forgetParameter($identifier);
+        if ($route !== null) {
+            $route->forgetParameter($identifier);
+            $binding = $route->bindingFieldFor($parameter);
+        }
 
-        return $this->handleIdentifier($tenancy, $identifier, $route->bindingFieldFor($parameter));
+        return $this->handleIdentifier($tenancy, $identifier, $binding);
     }
 
     /**

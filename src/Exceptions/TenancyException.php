@@ -28,10 +28,10 @@ final class TenancyException extends TenantedException
     public static function unknown(string $name, ?\Throwable $previous = null): self
     {
         return new self(
-            message: sprintf(
-                'No tenancy found [%s]',
-                $name
-            ),
+            message : sprintf(
+                          'No tenancy found [%s]',
+                          $name
+                      ),
             previous: $previous
         );
     }
@@ -42,6 +42,16 @@ final class TenancyException extends TenantedException
             sprintf(
                 'Configuration value [%s] not found for tenancy [%s]',
                 $value,
+                $name
+            )
+        );
+    }
+
+    public static function noTenant(string $name): self
+    {
+        return new self(
+            sprintf(
+                'No current tenant for tenancy [%s]',
                 $name
             )
         );
