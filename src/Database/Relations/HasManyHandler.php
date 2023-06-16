@@ -52,6 +52,7 @@ class HasManyHandler extends BaseRelationHandler
      */
     public function populateForCreation(Model $model, Tenancy $tenancy): void
     {
+        /** @var (\Illuminate\Database\Eloquent\Model&\Tenanted\Core\Contracts\Tenant)|null $tenant */
         $tenant = $tenancy->tenant();
 
         if ($tenant === null) {
@@ -62,7 +63,9 @@ class HasManyHandler extends BaseRelationHandler
 
         $relationName = $this->getRelationName($model, $tenancy);
 
-        $model->{$relationName}()->attach($tenant->getTenantKey());
+        /** @var \Illuminate\Database\Eloquent\Relations\BelongsToMany<\Illuminate\Database\Eloquent\Model> $relation */
+        $relation = $model->{$relationName}();
+        $relation->attach($tenant->getTenantKey());
     }
 
     /**

@@ -57,7 +57,8 @@ trait ManagesTenantResolvers
      * @return \Tenanted\Core\Contracts\TenantResolver
      *
      * @throws \Tenanted\Core\Exceptions\TenantResolverException
-     * @throws \Tenanted\Core\Exceptions\TenantResolverException
+     *
+     * @psalm-suppress MixedInferredReturnType
      */
     protected function makeTenantResolver(string $name): TenantResolver
     {

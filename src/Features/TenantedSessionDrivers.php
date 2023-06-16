@@ -12,6 +12,9 @@ use SessionHandlerInterface;
 use Tenanted\Core\Services\Session\TenantedDatabaseSessionHandler;
 use Tenanted\Core\TenantedManager;
 
+/**
+ * @psalm-suppress InvalidReturnType
+ */
 class TenantedSessionDrivers extends BaseFeature
 {
     /**
@@ -61,8 +64,8 @@ class TenantedSessionDrivers extends BaseFeature
         $handler = new TenantedDatabaseSessionHandler(
             $container->make(TenantedManager::class),
             $container->make('db')->connection($config->get('session.connection')),
-            $config->get('session.table'),
-            $config->get('session.lifetime'),
+            (string) $config->get('session.table'),
+            (int) $config->get('session.lifetime'),
             $container
         );
 
@@ -107,10 +110,10 @@ class TenantedSessionDrivers extends BaseFeature
     protected function buildSession(SessionHandlerInterface $handler, Repository $config): Store
     {
         return new Store(
-            $config->get('session.cookie'),
+            (string) $config->get('session.cookie'),
             $handler,
-            $id = null,
-            $config->get('session.serialization', 'php')
+            null,
+            (string) $config->get('session.serialization', 'php')
         );
     }
 
@@ -126,11 +129,11 @@ class TenantedSessionDrivers extends BaseFeature
     protected function buildEncryptedSession(SessionHandlerInterface $handler, Repository $config, Container $container): EncryptedStore
     {
         return new EncryptedStore(
-            $config->get('session.cookie'),
+            (string) $config->get('session.cookie'),
             $handler,
             $container['encrypter'],
-            $id = null,
-            $config->get('session.serialization', 'php'),
+            null,
+            (string) $config->get('session.serialization', 'php'),
         );
     }
 }

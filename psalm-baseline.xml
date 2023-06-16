@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="5.12.0@f90118cdeacd0088e7215e64c0c99ceca819e176">
+  <file src="src/Concerns/ManagesTenantResolvers.php">
+    <MixedArgument>
+      <code><![CDATA[$config['domain']]]></code>
+    </MixedArgument>
+  </file>
+  <file src="src/Database/Relations/BaseRelationHandler.php">
+    <MixedInferredReturnType>
+      <code>string</code>
+    </MixedInferredReturnType>
+    <MixedReturnStatement>
+      <code><![CDATA[$model->getTenantRelationName()]]></code>
+    </MixedReturnStatement>
+  </file>
+  <file src="src/Database/Relations/BelongsToHandler.php">
+    <MixedAssignment>
+      <code>$key</code>
+      <code>$relationName</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Database/Relations/HasOrMorphOneHandler.php">
+    <MixedAssignment>
+      <code>$foreignKey</code>
+      <code>$localKey</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Database/Relations/NoRelationHandler.php">
+    <MixedInferredReturnType>
+      <code>string</code>
+    </MixedInferredReturnType>
+    <MixedReturnStatement>
+      <code><![CDATA[$model->getTenantRelatedKeyName()]]></code>
+    </MixedReturnStatement>
+  </file>
+  <file src="src/Features/NotFoundOnInactive.php">
+    <MixedMethodCall>
+      <code>listen</code>
+    </MixedMethodCall>
+  </file>
+  <file src="src/Features/TenantedDatabaseConnections.php">
+    <MixedArgument>
+      <code><![CDATA[$this->app->make(DatabaseManager::class)]]></code>
+    </MixedArgument>
+  </file>
+  <file src="src/Features/TenantedRedisDrivers.php">
+    <MixedArgument>
+      <code><![CDATA[$this->app->make(TenantedManager::class)]]></code>
+      <code><![CDATA[$this->app->make(TenantedManager::class)]]></code>
+    </MixedArgument>
+    <MixedMethodCall>
+      <code>extend</code>
+      <code>extend</code>
+    </MixedMethodCall>
+  </file>
+  <file src="src/Features/TenantedSessionDrivers.php">
+    <MixedArgument>
+      <code><![CDATA[$container->make('db')->connection($config->get('session.connection'))]]></code>
+      <code><![CDATA[$container->make(TenantedManager::class)]]></code>
+    </MixedArgument>
+    <MixedMethodCall>
+      <code>connection</code>
+      <code>extend</code>
+      <code>extend</code>
+      <code>extend</code>
+      <code>extend</code>
+      <code>extend</code>
+      <code>extend</code>
+      <code>extend</code>
+      <code>extend</code>
+    </MixedMethodCall>
+  </file>
+  <file src="src/Http/Middleware/TenantedRoutes.php">
+    <MixedArgument>
+      <code><![CDATA[$request->route()?->getName()]]></code>
+    </MixedArgument>
+    <MixedMethodCall>
+      <code>getName</code>
+    </MixedMethodCall>
+  </file>
+  <file src="src/Resolvers/CookieTenantResolver.php">
+    <MixedAssignment>
+      <code>$response</code>
+    </MixedAssignment>
+    <MixedInferredReturnType>
+      <code>\Illuminate\Routing\RouteRegistrar</code>
+    </MixedInferredReturnType>
+    <MixedReturnStatement>
+      <code><![CDATA[app()->make(Router::class)->middleware(TenantedHelper::middleware($this->name(), $tenancy))]]></code>
+    </MixedReturnStatement>
+  </file>
+  <file src="src/Resolvers/HeaderTenantResolver.php">
+    <MixedAssignment>
+      <code>$response</code>
+    </MixedAssignment>
+    <MixedInferredReturnType>
+      <code>\Illuminate\Routing\RouteRegistrar</code>
+    </MixedInferredReturnType>
+    <MixedReturnStatement>
+      <code><![CDATA[app()->make(Router::class)->middleware(TenantedHelper::middleware($this->name(), $tenancy))]]></code>
+    </MixedReturnStatement>
+  </file>
+  <file src="src/Resolvers/PathTenantResolver.php">
+    <MixedInferredReturnType>
+      <code>\Illuminate\Routing\RouteRegistrar</code>
+    </MixedInferredReturnType>
+    <MixedMethodCall>
+      <code>prefix</code>
+    </MixedMethodCall>
+    <MixedReturnStatement>
+      <code><![CDATA[app()->make(Router::class)
+                    ->middleware(TenantedHelper::middleware($this->name(), $tenancy))
+                    ->prefix('/' . TenantedHelper::parameter($this->name(), $tenancy, $value))]]></code>
+    </MixedReturnStatement>
+  </file>
+  <file src="src/Resolvers/SessionTenantResolver.php">
+    <MixedInferredReturnType>
+      <code>\Illuminate\Routing\RouteRegistrar</code>
+    </MixedInferredReturnType>
+    <MixedReturnStatement>
+      <code><![CDATA[app()->make(Router::class)->middleware(TenantedHelper::middleware($this->name(), $tenancy))]]></code>
+    </MixedReturnStatement>
+  </file>
+  <file src="src/Resolvers/SubdomainTenantResolver.php">
+    <MixedInferredReturnType>
+      <code>RouteRegistrar</code>
+    </MixedInferredReturnType>
+    <MixedMethodCall>
+      <code>middleware</code>
+    </MixedMethodCall>
+    <MixedReturnStatement>
+      <code><![CDATA[app()->make(Router::class)
+                    ->domain(TenantedHelper::parameter($this->name(), $tenancy, $value) . '.' . $this->domain)
+                    ->middleware(TenantedHelper::middleware($this->name(), $tenancy))]]></code>
+    </MixedReturnStatement>
+  </file>
+  <file src="src/Services/Session/TenantedDatabaseSessionHandler.php">
+    <MixedArgumentTypeCoercion>
+      <code>$payload</code>
+    </MixedArgumentTypeCoercion>
+  </file>
+  <file src="src/Support/ArrayOverrides.php">
+    <UnusedForeachValue>
+      <code>$value</code>
+    </UnusedForeachValue>
+  </file>
+</files>

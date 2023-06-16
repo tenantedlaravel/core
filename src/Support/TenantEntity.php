@@ -83,7 +83,7 @@ class TenantEntity implements Tenant
      */
     public function getTenantIdentifier(): string
     {
-        return $this->{$this->getTenantIdentifierName()};
+        return (string) $this->__get($this->getTenantIdentifierName());
     }
 
     /**
@@ -99,7 +99,7 @@ class TenantEntity implements Tenant
      */
     public function getTenantKey(): mixed
     {
-        return $this->{$this->getTenantKeyName()};
+        return $this->__get($this->getTenantKeyName());
     }
 
     /**

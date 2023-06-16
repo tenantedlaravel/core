@@ -13,7 +13,7 @@ use Tenanted\Core\Support\TenantedHelper;
 use Tenanted\Core\TenantedManager;
 
 /**
- *
+ * @psalm-suppress PropertyNotSetInConstructor
  */
 class TenantedDatabaseSessionHandler extends DatabaseSessionHandler
 {
@@ -25,9 +25,11 @@ class TenantedDatabaseSessionHandler extends DatabaseSessionHandler
     /**
      * @param \Tenanted\Core\TenantedManager                 $manager
      * @param \Illuminate\Database\ConnectionInterface       $connection
-     * @param                                                $table
-     * @param                                                $minutes
+     * @param string                                         $table
+     * @param int                                            $minutes
      * @param \Illuminate\Contracts\Container\Container|null $container
+     *
+     * @psalm-suppress PropertyNotSetInConstructor
      */
     public function __construct(TenantedManager $manager, ConnectionInterface $connection, $table, $minutes, Container $container = null)
     {
@@ -59,10 +61,12 @@ class TenantedDatabaseSessionHandler extends DatabaseSessionHandler
     }
 
     /**
-     * @param $sessionId
-     * @param $payload
+     * @param string               $sessionId
+     * @param array<string, mixed> $payload
      *
      * @return bool|void|null
+     *
+     * @throws \Tenanted\Core\Exceptions\TenancyException
      */
     protected function performInsert($sessionId, $payload)
     {

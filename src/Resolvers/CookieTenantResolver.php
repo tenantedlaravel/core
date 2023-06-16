@@ -100,7 +100,7 @@ class CookieTenantResolver extends BaseTenantResolver implements ActsAsMiddlewar
      */
     public function routes(?string $tenancy = null, ?string $value = null): RouteRegistrar
     {
-        return app(Router::class)->middleware(TenantedHelper::middleware($this->name(), $tenancy));
+        return app()->make(Router::class)->middleware(TenantedHelper::middleware($this->name(), $tenancy));
     }
 
     /**
@@ -109,6 +109,8 @@ class CookieTenantResolver extends BaseTenantResolver implements ActsAsMiddlewar
      * @param \Tenanted\Core\Contracts\Tenancy $tenancy
      *
      * @return mixed
+     *
+     * @psalm-suppress MixedReturnStatement
      */
     public function asMiddleware(Request $request, Closure $next, Tenancy $tenancy): mixed
     {
@@ -118,7 +120,7 @@ class CookieTenantResolver extends BaseTenantResolver implements ActsAsMiddlewar
         if ($response instanceof Response && $tenancy->resolver() === $this && $tenancy->check() && ! $this->cookieJar->hasQueued($cookie)) {
             return $response->withCookie($this->cookieJar->make(
                 $cookie,
-                $tenancy->identifiedUsing() // @phpstan-ignore-line
+                (string) $tenancy->identifiedUsing() // @phpstan-ignore-line
             ));
         }
 

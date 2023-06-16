@@ -41,6 +41,7 @@ class BelongsToHandler extends BaseRelationHandler
         } else {
             // Since this is a 'belongs to' relation, we can check the foreign
             // key without generating a query
+            /** @var \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Database\Eloquent\Model> $relation */
             $relation = $model->{$relationName}();
             $key      = $model->getAttribute($relation->getForeignKeyName());
 
@@ -58,6 +59,7 @@ class BelongsToHandler extends BaseRelationHandler
      */
     public function populateForCreation(Model $model, Tenancy $tenancy): void
     {
+        /** @var (\Illuminate\Database\Eloquent\Model&\Tenanted\Core\Contracts\Tenant)|null $tenant */
         $tenant = $tenancy->tenant();
 
         if ($tenant === null) {
@@ -68,7 +70,9 @@ class BelongsToHandler extends BaseRelationHandler
 
         $relationName = $this->getRelationName($model, $tenancy);
 
-        $model->{$relationName}()->associate($tenant);
+        /** @var \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Database\Eloquent\Model> $relation */
+        $relation = $model->{$relationName}();
+        $relation->associate($tenant);
     }
 
     /**
@@ -79,6 +83,7 @@ class BelongsToHandler extends BaseRelationHandler
      */
     public function populateAfterLoading(Model $model, Tenancy $tenancy): void
     {
+        /** @var (\Illuminate\Database\Eloquent\Model&\Tenanted\Core\Contracts\Tenant)|null $tenant */
         $tenant = $tenancy->tenant();
 
         if ($tenant === null) {
@@ -93,8 +98,8 @@ class BelongsToHandler extends BaseRelationHandler
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model   $model
-     * @param \Tenanted\Core\Contracts\Tenancy      $tenancy
+     * @param \Illuminate\Database\Eloquent\Model                                        $model
+     * @param \Tenanted\Core\Contracts\Tenancy                                           $tenancy
      * @param \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model> $builder
      *
      * @return \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model>
@@ -116,6 +121,7 @@ class BelongsToHandler extends BaseRelationHandler
             $relationName = $tenancy->name();
         }
 
+        /** @var \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Database\Eloquent\Model> $relation */
         $relation = $model->{$relationName}();
 
         return $builder->where($relation->getForeignKeyName(), '=', $tenant->getTenantKey());

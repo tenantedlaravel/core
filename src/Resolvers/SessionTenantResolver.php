@@ -45,6 +45,9 @@ class SessionTenantResolver extends BaseTenantResolver implements ActsAsMiddlewa
      * @param string $sessionName
      *
      * @return string|null
+     *
+     * @psalm-suppress MixedReturnStatement
+     * @psalm-suppress MixedInferredReturnType
      */
     private function getIdentifierFromSession(string $sessionName): ?string
     {
@@ -88,7 +91,7 @@ class SessionTenantResolver extends BaseTenantResolver implements ActsAsMiddlewa
      */
     public function routes(?string $tenancy = null, ?string $value = null): RouteRegistrar
     {
-        return app(Router::class)->middleware(TenantedHelper::middleware($this->name(), $tenancy));
+        return app()->make(Router::class)->middleware(TenantedHelper::middleware($this->name(), $tenancy));
     }
 
     /**

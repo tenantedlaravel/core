@@ -10,6 +10,8 @@ abstract class BaseFeature implements Feature
 {
     /**
      * @var \Illuminate\Contracts\Foundation\Application
+     *
+     * @psalm-suppress PropertyNotSetInConstructor
      */
     protected Application $app;
 

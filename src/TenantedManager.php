@@ -30,6 +30,9 @@ final class TenantedManager
 
     /**
      * @return string
+     *
+     * @psalm-suppress MixedReturnStatement
+     * @psalm-suppress MixedInferredReturnType
      */
     public function getDefaultProviderName(): string
     {
@@ -39,7 +42,10 @@ final class TenantedManager
     /**
      * @param string $name
      *
-     * @return mixed[]|null
+     * @return array<string, mixed>|null
+     *
+     * @psalm-suppress MixedReturnStatement
+     * @psalm-suppress MixedInferredReturnType
      */
     protected function getProviderConfig(string $name): ?array
     {
@@ -48,6 +54,9 @@ final class TenantedManager
 
     /**
      * @return string
+     *
+     * @psalm-suppress MixedReturnStatement
+     * @psalm-suppress MixedInferredReturnType
      */
     public function getDefaultTenancyName(): string
     {
@@ -57,7 +66,10 @@ final class TenantedManager
     /**
      * @param string $name
      *
-     * @return mixed[]|null
+     * @return array<string, mixed>|null
+     *
+     * @psalm-suppress MixedReturnStatement
+     * @psalm-suppress MixedInferredReturnType
      */
     protected function getTenancyConfig(string $name): ?array
     {
@@ -66,6 +78,9 @@ final class TenantedManager
 
     /**
      * @return string
+     *
+     * @psalm-suppress MixedReturnStatement
+     * @psalm-suppress MixedInferredReturnType
      */
     public function getDefaultResolverName(): string
     {
@@ -75,7 +90,10 @@ final class TenantedManager
     /**
      * @param string $name
      *
-     * @return mixed[]|null
+     * @return array<string, mixed>|null
+     *
+     * @psalm-suppress MixedReturnStatement
+     * @psalm-suppress MixedInferredReturnType
      */
     protected function getResolverConfig(string $name): ?array
     {

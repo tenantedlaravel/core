@@ -24,8 +24,8 @@ final class ArrayOverrides
     private array $disallow;
 
     /**
-     * @param string[]|empty $allow
-     * @param string[]|empty $disallow
+     * @param string[]|empty           $allow
+     * @param string[]|empty           $disallow
      *
      * @phpstan-param string[]|array{} $allow
      * @phpstan-param string[]|array{} $disallow
@@ -39,7 +39,7 @@ final class ArrayOverrides
     /**
      * Get the allowed patterns
      *
-     * @return array|string[]
+     * @return string[]
      */
     public function allow(): array
     {
@@ -49,7 +49,7 @@ final class ArrayOverrides
     /**
      * Get the disallowed patterns
      *
-     * @return array|string[]
+     * @return string[]
      */
     public function disallow(): array
     {
@@ -104,14 +104,23 @@ final class ArrayOverrides
      * Clean the data by filtering through the allows and disallows
      *
      * @param array<string, array<mixed>|string> $data
-     * @param bool  $undot
+     * @param bool                               $undot
      *
      * @return array<string, array<mixed>|string>|array<string, mixed>
+     *
+     * @psalm-suppress MixedReturnTypeCoercion
      */
     public function clean(array $data, bool $undot = true): array
     {
+        /**
+         * @var array<string, mixed> $data
+         */
         $data = Arr::dot($data);
 
+        /**
+         * @psalm-suppress MixedAssignment
+         * @psalm-suppress UnusedForeachValue
+         */
         foreach ($data as $key => $value) {
             if ($this->disallows($key)) {
                 unset($data[$key]);
@@ -132,6 +141,8 @@ final class ArrayOverrides
      * @param array<string, array<mixed>|string> $new
      *
      * @return array<string, array<mixed>|string>|array<string, mixed>
+     *
+     * @psalm-suppress MixedReturnTypeCoercion
      */
     public function override(array $original, array $new): array
     {

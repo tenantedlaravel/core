@@ -66,6 +66,9 @@ class HasOrMorphOneHandler extends BaseRelationHandler
      */
     public function populateForCreation(Model $model, Tenancy $tenancy): void
     {
+        /**
+         * @var (\Illuminate\Database\Eloquent\Model&\Tenanted\Core\Contracts\Tenant)|null $tenant
+         */
         $tenant = $tenancy->tenant();
 
         if ($tenant === null) {
@@ -76,7 +79,10 @@ class HasOrMorphOneHandler extends BaseRelationHandler
 
         $relationName = $this->getRelationName($model, $tenancy);
 
-        $model->{$relationName}()->save($tenant);
+        /** @var \Illuminate\Database\Eloquent\Relations\HasOne<\Illuminate\Database\Eloquent\Model>|\Illuminate\Database\Eloquent\Relations\MorphOne<\Illuminate\Database\Eloquent\Model> $relation */
+        $relation = $model->{$relationName}();
+        $relation->save($tenant);
+
         $model->setRelation($relationName, $tenant);
     }
 

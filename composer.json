@@ -16,7 +16,10 @@
   "autoload"         : {
     "psr-4": {
       "Tenanted\\Core\\": "src/"
-    }
+    },
+    "files": [
+      "src/helpers.php"
+    ]
   },
   "autoload-dev"     : {
     "psr-4": {

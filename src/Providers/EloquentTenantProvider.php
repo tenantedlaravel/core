@@ -26,7 +26,9 @@ class EloquentTenantProvider implements TenantProvider
 
     /**
      * @var M
+     *
      * @noinspection PhpDocFieldTypeMismatchInspection
+     * @psalm-suppress PropertyNotSetInConstructor
      */
     private Model&Tenant $instance;
 
@@ -45,8 +47,12 @@ class EloquentTenantProvider implements TenantProvider
      *
      * @return M
      */
-    public function getModel(): Model&Tenant
+    public function getModel(): Tenant&Model
     {
+        /**
+         * @psalm-suppress RedundantPropertyInitializationCheck
+         * @psalm-suppress UnsafeInstantiation
+         */
         if (! isset($this->instance)) {
             $this->instance = new $this->model;
         }
@@ -81,6 +87,7 @@ class EloquentTenantProvider implements TenantProvider
      */
     public function retrieveByIdentifier(string $identifier): ?Tenant
     {
+        /** @psalm-suppress MixedArgument */
         return $this->retrieveBy(
             $this->getModel()->getTenantIdentifierName(),
             $identifier
@@ -96,6 +103,7 @@ class EloquentTenantProvider implements TenantProvider
      */
     public function retrieveByKey(mixed $key): ?Tenant
     {
+        /** @psalm-suppress MixedArgument */
         return $this->retrieveBy(
             $this->getModel()->getTenantKeyName(),
             $key

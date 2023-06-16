@@ -24,8 +24,11 @@ final class NoRelationHandler extends BaseRelationHandler
      */
     private function getAttributeName(Model $model): string
     {
-        // @phpstan-ignore-next-line
-        /** @var \Illuminate\Database\Eloquent\Model&\Tenanted\Core\Concerns\OwnedByTenant $model */
+        /**
+         * @psalm-suppress UndefinedDocblockClass
+         * @var \Illuminate\Database\Eloquent\Model&\Tenanted\Core\Concerns\OwnedByTenant $model
+         * @phpstan-ignore-next-line
+         */
         return $model->getTenantRelatedKeyName();
     }
 
@@ -65,8 +68,8 @@ final class NoRelationHandler extends BaseRelationHandler
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model   $model
-     * @param \Tenanted\Core\Contracts\Tenancy      $tenancy
+     * @param \Illuminate\Database\Eloquent\Model                                        $model
+     * @param \Tenanted\Core\Contracts\Tenancy                                           $tenancy
      * @param \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model> $builder
      *
      * @return \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model>

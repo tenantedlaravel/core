@@ -9,7 +9,7 @@ namespace Tenanted\Core\Events;
  * @package tenantedlaravel/core
  * @author  Ollie Read <code@ollie.codes>
  */
-class TenantIdentified extends TenantFound
+final class TenantIdentified extends TenantFound
 {
 
 }

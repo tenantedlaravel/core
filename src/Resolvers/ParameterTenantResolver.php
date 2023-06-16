@@ -25,6 +25,7 @@ abstract class ParameterTenantResolver extends BaseTenantResolver implements Act
      */
     public function resolve(Request $request, Tenancy $tenancy): bool
     {
+        /** @var \Illuminate\Routing\Route|null $route */
         $route     = $request->route();
         $parameter = TenantedHelper::parameterName($this->name(), $tenancy->name());
         $binding   = null;

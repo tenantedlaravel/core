@@ -61,6 +61,8 @@ trait ManagesTenantProviders
      * @return \Tenanted\Core\Contracts\TenantProvider
      *
      * @throws \Tenanted\Core\Exceptions\TenantProviderException
+     *
+     * @psalm-suppress MixedInferredReturnType
      */
     protected function makeProvider(string $name): TenantProvider
     {
@@ -164,6 +166,7 @@ trait ManagesTenantProviders
          * @var array{model:class-string<\Illuminate\Database\Eloquent\Model&\Tenanted\Core\Contracts\Tenant>} $config
          */
 
+        /** @psalm-suppress MixedArgument */
         return new EloquentTenantProvider($name, $config['model']);
     }
 
@@ -187,6 +190,7 @@ trait ManagesTenantProviders
          * @var array{table:string, connection:string|null, identifier:string|null, key:string|null, entity:class-string<\Tenanted\Core\Contracts\Tenant>|null} $config
          */
 
+        /** @psalm-suppress MixedArgument */
         return new DatabaseTenantProvider(
             $name,
             app(DatabaseManager::class)->connection($config['connection'] ?? null),
@@ -222,6 +226,7 @@ trait ManagesTenantProviders
             throw TenantProviderException::missingValue('source.type', $name);
         }
 
+        /** @psalm-suppress MixedArgument */
         $data = $this->getTenantsForSource($config['source']);
 
         /**
@@ -245,6 +250,8 @@ trait ManagesTenantProviders
      * @return array<int, array<string, mixed>>
      *
      * @throws \JsonException
+     *
+     * @psalm-suppress MixedInferredReturnType
      */
     protected function getTenantsForSource(array $config): array
     {
@@ -268,6 +275,7 @@ trait ManagesTenantProviders
             }
 
             if (isset($config['path'])) {
+                /** @psalm-suppress UnresolvableInclude */
                 return require $config['path'];
             }
 

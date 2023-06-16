@@ -29,6 +29,7 @@ class HasManyThroughHandler extends BaseRelationHandler
         $relationName = $this->getRelationName($model, $tenancy);
 
         if ($model->relationLoaded($relationName)) {
+            /** @var \Illuminate\Database\Eloquent\Collection|\Tenanted\Core\Contracts\Tenant $loaded */
             $loaded      = $model->getRelation($relationName);
             $tenantClass = $tenant::class;
 
@@ -80,8 +81,8 @@ class HasManyThroughHandler extends BaseRelationHandler
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model   $model
-     * @param \Tenanted\Core\Contracts\Tenancy      $tenancy
+     * @param \Illuminate\Database\Eloquent\Model                                        $model
+     * @param \Tenanted\Core\Contracts\Tenancy                                           $tenancy
      * @param \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model> $builder
      *
      * @return \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model>

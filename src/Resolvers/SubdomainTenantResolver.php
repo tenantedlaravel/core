@@ -34,8 +34,8 @@ class SubdomainTenantResolver extends ParameterTenantResolver
 
     public function routes(?string $tenancy = null, ?string $value = null): RouteRegistrar
     {
-        return app(Router::class)
-            ->domain(TenantedHelper::parameter($this->name(), $tenancy, $value) . '.' . $this->domain)
-            ->middleware(TenantedHelper::middleware($this->name(), $tenancy));
+        return app()->make(Router::class)
+                    ->domain(TenantedHelper::parameter($this->name(), $tenancy, $value) . '.' . $this->domain)
+                    ->middleware(TenantedHelper::middleware($this->name(), $tenancy));
     }
 }

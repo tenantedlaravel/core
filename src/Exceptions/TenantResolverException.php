@@ -19,7 +19,7 @@ final class TenantResolverException extends TenantedException
     {
         return new self(
             sprintf(
-                'The current request is missing its %s [%s], and the tenant resolver [%s] requires one',
+                'The current request is missing its %s [%s], and the tenant resolver [%s] requires exactly one',
                 $missingName,
                 $identifierName,
                 $name

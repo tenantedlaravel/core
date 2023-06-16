@@ -23,9 +23,14 @@ class RouteMatchedListener
 
     public function handle(RouteMatched $event): void
     {
-        $routeMiddleware = app(Router::class)->resolveMiddleware($event->route->middleware(), $event->route->excludedMiddleware());
+        /** @var array<string> $allMiddleware */
+        $allMiddleware   = $event->route->middleware();
+        $routeMiddleware = app(Router::class)->resolveMiddleware($allMiddleware, $event->route->excludedMiddleware());
         $forget          = true;
 
+        /**
+         * @var string $middleware
+         */
         foreach ($routeMiddleware as $middleware) {
             if ($middleware === TenantedRoutes::class || Str::startsWith($middleware, TenantedRoutes::class . ':')) {
                 if ($this->handleFoundMiddleware($event, $middleware)) {
@@ -47,7 +52,7 @@ class RouteMatchedListener
         $tenancy = $this->manager->tenancy(empty($tenancyName) ? null : $tenancyName);
         $this->manager->stackTenancy($tenancy);
 
-        if ($resolverName !== null) {
+        if (! empty($resolverName)) {
             $tenancy->use($this->manager->resolver($resolverName));
         }
 

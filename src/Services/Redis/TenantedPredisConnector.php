@@ -28,8 +28,8 @@ class TenantedPredisConnector extends PredisConnector
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<string, mixed> $options
+     * @param array<array-key, mixed> $config
+     * @param array<array-key, mixed> $options
      *
      * @return \Illuminate\Redis\Connections\PredisConnection
      */
@@ -41,9 +41,9 @@ class TenantedPredisConnector extends PredisConnector
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<string, mixed> $clusterOptions
-     * @param array<string, mixed> $options
+     * @param array<array-key, mixed> $config
+     * @param array<array-key, mixed> $clusterOptions
+     * @param array<array-key, mixed> $options
      *
      * @return \Illuminate\Redis\Connections\PredisClusterConnection
      */
@@ -55,9 +55,9 @@ class TenantedPredisConnector extends PredisConnector
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<string, mixed> $options
-     * @param array<string, mixed> $options2
+     * @param array<array-key, mixed> $config
+     * @param array<array-key, mixed> $options
+     * @param array<array-key, mixed> $options2
      *
      * @return void
      */
@@ -69,9 +69,10 @@ class TenantedPredisConnector extends PredisConnector
             throw new RuntimeException('No current tenant');
         }
 
+        /** @var string|null $prefix */
         $prefix = $options2['prefix'] ?? $options['prefix'] ?? $config['prefix'] ?? null;
         unset($options2['prefix'], $options['prefix'], $config['prefix']);
 
-        $config['prefix'] = $tenant->getTenantIdentifier() . ':' . $prefix;
+        $config['prefix'] = $tenant->getTenantIdentifier() . ($prefix ? ':' . $prefix : '');
     }
 }

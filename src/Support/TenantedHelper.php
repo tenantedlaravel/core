@@ -20,7 +20,7 @@ final class TenantedHelper
      */
     public static function middleware(?string $resolver = null, ?string $tenancy = null): string
     {
-        return 'tenanted:' . $tenancy . ',' . $resolver;
+        return 'tenanted:' . ($tenancy ?? '') . ',' .($resolver ?? '');
     }
 
     /**
@@ -58,6 +58,7 @@ final class TenantedHelper
             throw TenancyException::noTenant($tenancy->name());
         }
 
+        /** @psalm-suppress PossiblyNullReference */
         return $tenancy->name() . '_' . $tenancy->tenant()->getTenantKeyName();
     }
 

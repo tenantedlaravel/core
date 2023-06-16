@@ -19,8 +19,8 @@ class PathTenantResolver extends ParameterTenantResolver
     private int $segment;
 
     /**
-     * @param string      $name
-     * @param int         $segment
+     * @param string $name
+     * @param int    $segment
      */
     public function __construct(string $name, int $segment = 0)
     {
@@ -47,8 +47,8 @@ class PathTenantResolver extends ParameterTenantResolver
      */
     public function routes(?string $tenancy = null, ?string $value = null): RouteRegistrar
     {
-        return app(Router::class)
-            ->middleware(TenantedHelper::middleware($this->name(), $tenancy))
-            ->prefix('/' . TenantedHelper::parameter($this->name(), $tenancy, $value));
+        return app()->make(Router::class)
+                    ->middleware(TenantedHelper::middleware($this->name(), $tenancy))
+                    ->prefix('/' . TenantedHelper::parameter($this->name(), $tenancy, $value));
     }
 }

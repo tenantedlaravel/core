@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Tenanted\Core\Providers;
 
+use Closure;
+use RuntimeException;
 use Tenanted\Core\Contracts\Tenant;
 use Tenanted\Core\Contracts\TenantProvider;
 use Tenanted\Core\Support\TenantEntity;
@@ -55,8 +57,8 @@ class ArrayTenantProvider implements TenantProvider
      * @param class-string<\Tenanted\Core\Contracts\Tenant> $entity
      */
     public function __construct(
-        string $name,
-        array  $tenants,
+        string  $name,
+        array   $tenants,
         ?string $identifier = 'identifier',
         ?string $key = 'id',
         ?string $entity = TenantEntity::class
@@ -78,11 +80,16 @@ class ArrayTenantProvider implements TenantProvider
     {
         foreach ($this->tenants as $index => $tenant) {
             if (! isset($tenant[$this->identifier], $tenant[$this->key])) {
-                // TODO: Throw an exception
+                throw new RuntimeException('Tenant missing identifier and/or key');
             }
 
+            /**
+             * @psalm-suppress MixedPropertyTypeCoercion
+             * @psalm-suppress MixedArrayOffset
+             */
             $this->tenantIdentifierMap[$tenant[$this->identifier]] = $index; // @phpstan-ignore-line
-            $this->tenantKeyMap[$tenant[$this->key]]               = $index;
+            /** @psalm-suppress MixedArrayOffset */
+            $this->tenantKeyMap[$tenant[$this->key]] = $index;
         }
     }
 
@@ -143,6 +150,7 @@ class ArrayTenantProvider implements TenantProvider
      */
     public function retrieveByKey(mixed $key): ?Tenant
     {
+        /** @psalm-suppress MixedArrayOffset */
         if (! isset($this->tenantKeyMap[$key])) {
             return null;
         }
@@ -162,7 +170,7 @@ class ArrayTenantProvider implements TenantProvider
             if (isset($tenant[$name])) {
                 if (
                     $tenant[$name] === $value
-                    || ($value instanceof \Closure && $value($tenant[$name]))
+                    || ($value instanceof Closure && $value($tenant[$name]))
                 ) {
                     return $this->makeEntity($index);
                 }

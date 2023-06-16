@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Tenanted\Core\Features;
 
 use Closure;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\DatabaseManager;
 
 class TenantedDatabaseConnections extends BaseFeature
@@ -23,11 +22,20 @@ class TenantedDatabaseConnections extends BaseFeature
         $this->app->alias('db', DatabaseManager::class);
 
         // Create a macro to create new driver instances.
+        /**
+         * @psalm-suppress InaccessibleProperty
+         * @psalm-suppress PossiblyNullArgument
+         * @psalm-suppress MixedArrayOffset
+         */
         DatabaseManager::macro('driver', Closure::bind(function (array $config, string $name) {
             /**
+             * @var array{driver:string|null}            $config
              * @var \Illuminate\Database\DatabaseManager $this
              */
-            if (isset($this->extensions[$driver = $config['driver']])) {
+
+            $driver = $config['driver'];
+
+            if ($driver !== null && isset($this->extensions[$driver])) {
                 return call_user_func($this->extensions[$driver], $config, $name);
             }
 

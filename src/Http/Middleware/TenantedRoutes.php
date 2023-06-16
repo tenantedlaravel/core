@@ -58,6 +58,9 @@ class TenantedRoutes
             return $resolverInstance->asMiddleware($request, $next, $tenancyInstance);
         }
 
+        /**
+         * @psalm-suppress PossiblyInvalidMethodCall
+         */
         throw ErrantMiddlewareException::shouldNotRun(self::class, $request->route()?->getName());
     }
 }

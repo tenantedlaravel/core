@@ -31,8 +31,19 @@ interface Tenancy
      *
      * @return bool
      *
-     * @phpstan-assert-if-true Tenant $this->tenant()
+     * @phpstan-assert-if-true \Tenanted\Core\Contracts\Tenant $this->tenant()
      * @phpstan-assert-if-false null $this->tenant()
+     * @phpstan-assert-if-true mixed $this->key()
+     * @phpstan-assert-if-false null $this->key()
+     * @phpstan-assert-if-true string $this->identifier()
+     * @phpstan-assert-if-false null $this->identifier()
+     *
+     * @psalm-assert-if-true \Tenanted\Core\Contracts\Tenant $this->tenant()
+     * @psalm-assert-if-false null $this->tenant()
+     * @psalm-assert-if-true mixed $this->key()
+     * @psalm-assert-if-false null $this->key()
+     * @psalm-assert-if-true string $this->identifier()
+     * @psalm-assert-if-false null $this->identifier()
      */
     public function check(): bool;
 

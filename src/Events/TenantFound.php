@@ -13,12 +13,16 @@ use Tenanted\Core\Contracts\Tenant;
  * This is a base event class used by all events for when tenants are retrieved
  * from storage.
  *
- * @package tenantedlaravel/core
- * @author  Ollie Read <code@ollie.codes>
+ * @package        tenantedlaravel/core
+ * @author         Ollie Read <code@ollie.codes>
  *
  * @method static static dispatch(Tenant $tenant, Tenancy $tenancy)
- * @method static static dispatchIf(bool $boolean, Tenant $tenant, Tenancy $tenancy)
- * @method static static dispatchUnless(bool $boolean, Tenant $tenant, Tenancy $tenancy)
+ * @method static static|void dispatchIf(bool $boolean, Tenant $tenant, Tenancy $tenancy)
+ * @method static static|void dispatchUnless(bool $boolean, Tenant $tenant, Tenancy $tenancy)
+ *
+ * @psalm-suppress MethodSignatureMismatch
+ * @psalm-suppress MoreSpecificImplementedParamType
+ * @psalm-suppress ImplementedReturnTypeMismatch
  */
 abstract class TenantFound extends TenancyEvent
 {
@@ -47,6 +51,9 @@ abstract class TenantFound extends TenancyEvent
 
     /**
      * @return string
+     *
+     * @psalm-suppress NullableReturnStatement
+     * @psalm-suppress InvalidNullableReturnType
      */
     public function via(): string
     {

@@ -26,11 +26,14 @@ trait TenancyHelpers
 
     /**
      * @var \Tenanted\Core\Contracts\TenantResolver|null
+     *
+     * @psalm-suppress PropertyNotSetInConstructor
      */
     protected ?TenantResolver $resolver;
 
     /**
      * @return array<string, mixed>
+     * @psalm-suppress MixedReturnTypeCoercion
      */
     public function config(): array
     {

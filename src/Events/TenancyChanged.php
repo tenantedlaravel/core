@@ -12,11 +12,15 @@ use Tenanted\Core\Contracts\Tenant;
  * @package tenantedlaravel/core
  * @author  Ollie Read <code@ollie.codes>
  *
- * @method static static dispatch(Tenant|null $current, Tenant|null $previous, Tenancy $tenancy)
- * @method static static dispatchIf(bool $boolean, Tenant|null $current, Tenant|null $previous, Tenancy $tenancy)
- * @method static static dispatchUnless(bool $boolean, Tenant|null $current, Tenant|null $previous, Tenancy $tenancy)
+ * @method static TenancyChanged dispatch(Tenant|null $current, Tenant|null $previous, Tenancy $tenancy)
+ * @method static TenancyChanged|void dispatchIf(bool $boolean, Tenant|null $current, Tenant|null $previous, Tenancy $tenancy)
+ * @method static TenancyChanged|void dispatchUnless(bool $boolean, Tenant|null $current, Tenant|null $previous, Tenancy $tenancy)
+ *
+ * @psalm-suppress MethodSignatureMismatch
+ * @psalm-suppress MoreSpecificImplementedParamType
+ * @psalm-suppress ImplementedReturnTypeMismatch
  */
-class TenancyChanged extends TenancyEvent
+final class TenancyChanged extends TenancyEvent
 {
     /**
      * @var \Tenanted\Core\Contracts\Tenant|null

@@ -28,8 +28,8 @@ class TenantedPhpRedisConnector extends PhpRedisConnector
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<string, mixed> $options
+     * @param array<array-key, mixed> $config
+     * @param array<array-key, mixed> $options
      *
      * @return \Illuminate\Redis\Connections\PhpRedisConnection
      */
@@ -41,9 +41,9 @@ class TenantedPhpRedisConnector extends PhpRedisConnector
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<string, mixed> $clusterOptions
-     * @param array<string, mixed> $options
+     * @param array<array-key, mixed> $config
+     * @param array<array-key, mixed> $clusterOptions
+     * @param array<array-key, mixed> $options
      *
      * @return \Illuminate\Redis\Connections\PhpRedisClusterConnection
      */
@@ -55,9 +55,9 @@ class TenantedPhpRedisConnector extends PhpRedisConnector
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<string, mixed> $options
-     * @param array<string, mixed> $options2
+     * @param array<array-key, mixed> $config
+     * @param array<array-key, mixed> $options
+     * @param array<array-key, mixed> $options2
      *
      * @return void
      */
@@ -69,11 +69,21 @@ class TenantedPhpRedisConnector extends PhpRedisConnector
             throw new RuntimeException('No current tenant');
         }
 
-        // @phpstan-ignore-next-line
+        /**
+         * @var string|null $prefix
+         * @psalm-suppress MixedArrayAccess
+         * @phpstan-ignore-next-line
+         */
         $prefix = $options2['prefix'] ?? $options['prefix'] ?? $config['options']['prefix'] ?? null;
-        // @phpstan-ignore-next-line
+        /**
+         * @psalm-suppress MixedArrayAccess
+         * @phpstan-ignore-next-line
+         */
         unset($options2['prefix'], $options['prefix'], $config['options']['prefix']);
-        // @phpstan-ignore-next-line
-        $config['options']['prefix'] = $tenant->getTenantIdentifier() . ':' . $prefix;
+        /**
+         * @psalm-suppress MixedArrayAssignment
+         * @phpstan-ignore-next-line
+         */
+        $config['options']['prefix'] = $tenant->getTenantIdentifier() . ($prefix ? ':' . $prefix : '');
     }
 }
