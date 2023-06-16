@@ -56,7 +56,7 @@ class HeaderTenantResolver extends BaseTenantResolver implements ActsAsMiddlewar
     {
         $header = $request->header($this->getHeaderName($tenancy));
 
-        if (! $header || is_array($header)) {
+        if (! $header || ! is_string($header)) {
             throw TenantResolverException::noIdentifier('header', $this->getHeaderName($tenancy), $this->name());
         }
 

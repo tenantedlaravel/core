@@ -83,6 +83,7 @@ class TenantEntity implements Tenant
      */
     public function getTenantIdentifier(): string
     {
+        // @phpstan-ignore-next-line
         return (string) $this->__get($this->getTenantIdentifierName());
     }
 

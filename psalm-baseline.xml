@@ -144,4 +144,31 @@
       <code>$value</code>
     </UnusedForeachValue>
   </file>
+  <file src="src/TenantedServiceProvider.php">
+    <MixedAssignment>
+      <code>$kernel</code>
+    </MixedAssignment>
+    <MixedInferredReturnType>
+      <code>?TenancyContract</code>
+      <code>?Tenant</code>
+      <code>RouteRegistrar</code>
+      <code>TenantProvider</code>
+    </MixedInferredReturnType>
+    <MixedMethodCall>
+      <code>aliasMiddleware</code>
+      <code>current</code>
+      <code>current</code>
+      <code>listen</code>
+      <code>provider</code>
+      <code>routes</code>
+      <code>tenant</code>
+    </MixedMethodCall>
+    <MixedReturnStatement>
+      <code><![CDATA[$app->make(TenantedManager::class)->current()]]></code>
+      <code><![CDATA[$app->make(TenantedManager::class)->current()?->tenant()]]></code>
+      <code><![CDATA[$app->make(TenantedManager::class)->current()?->tenant()]]></code>
+      <code><![CDATA[$app->make(TenantedManager::class)->provider($parameters['name'] ?? null)]]></code>
+      <code><![CDATA[$this->app->make(TenantedManager::class)->routes($resolver, $tenancy, $value)]]></code>
+    </MixedReturnStatement>
+  </file>
 </files>

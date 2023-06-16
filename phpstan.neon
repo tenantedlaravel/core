@@ -11,7 +11,7 @@ parameters:
   ignoreErrors:
     - message: '#Method Tenanted\\Core\\TenantedManager::getDefault([a-zA-Z]*)Name\(\) should return string but returns mixed#'
       path: src/TenantedManager.php
-    - message: '#Method Tenanted\\Core\\TenantedManager::get([a-zA-Z]*)Config\(\) should return array\|null but returns mixed#'
+    - message: '#Method Tenanted\\Core\\TenantedManager::get([a-zA-Z]*)Config\(\) should return array<string, mixed>\|null but returns mixed#'
       path: src/TenantedManager.php
     - message: '#Method Tenanted\\Core\\Resolvers\\SessionTenantResolver::getIdentifierFromSession\(\) should return string\|null but returns mixed#'
       path: src/Resolvers/SessionTenantResolver.php

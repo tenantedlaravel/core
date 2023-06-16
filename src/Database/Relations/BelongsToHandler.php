@@ -41,7 +41,10 @@ class BelongsToHandler extends BaseRelationHandler
         } else {
             // Since this is a 'belongs to' relation, we can check the foreign
             // key without generating a query
-            /** @var \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Database\Eloquent\Model> $relation */
+            /**
+             * @var \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Database\Eloquent\Model, \Illuminate\Database\Eloquent\Model> $relation
+             * @psalm-suppress TooManyTemplateParams
+             */
             $relation = $model->{$relationName}();
             $key      = $model->getAttribute($relation->getForeignKeyName());
 
@@ -70,7 +73,10 @@ class BelongsToHandler extends BaseRelationHandler
 
         $relationName = $this->getRelationName($model, $tenancy);
 
-        /** @var \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Database\Eloquent\Model> $relation */
+        /**
+         * @var \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Database\Eloquent\Model, \Illuminate\Database\Eloquent\Model> $relation
+         * @psalm-suppress TooManyTemplateParams
+         */
         $relation = $model->{$relationName}();
         $relation->associate($tenant);
     }
@@ -121,7 +127,10 @@ class BelongsToHandler extends BaseRelationHandler
             $relationName = $tenancy->name();
         }
 
-        /** @var \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Database\Eloquent\Model> $relation */
+        /**
+         * @var \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Database\Eloquent\Model, \Illuminate\Database\Eloquent\Model> $relation
+         * @psalm-suppress TooManyTemplateParams
+         */
         $relation = $model->{$relationName}();
 
         return $builder->where($relation->getForeignKeyName(), '=', $tenant->getTenantKey());

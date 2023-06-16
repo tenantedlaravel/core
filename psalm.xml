@@ -12,7 +12,6 @@
         <directory name="src"/>
         <ignoreFiles>
             <directory name="vendor"/>
-            <file name="src/TenantedServiceProvider.php"/>
         </ignoreFiles>
     </projectFiles>
     <plugins>

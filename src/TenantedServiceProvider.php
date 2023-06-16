@@ -13,8 +13,6 @@ use Illuminate\Support\ServiceProvider;
 use Tenanted\Core\Contracts\Tenancy as TenancyContract;
 use Tenanted\Core\Contracts\Tenant;
 use Tenanted\Core\Contracts\TenantProvider;
-use Tenanted\Core\Events\FeatureBooted;
-use Tenanted\Core\Events\FeatureInitialised;
 use Tenanted\Core\Http\Middleware\TenantedRoutes;
 use Tenanted\Core\Listeners\RouteMatchedListener;
 
@@ -31,7 +29,7 @@ class TenantedServiceProvider extends ServiceProvider
         $this->registerMiddleware();
         $this->registerMacros();
         $this->registerEventsAndListeners();
-        //$this->initialiseFeatures();
+        $this->initialiseFeatures();
     }
 
     private function registerBindings(): void
@@ -43,13 +41,13 @@ class TenantedServiceProvider extends ServiceProvider
         // When requesting a TenantProvider, we want to return the default
         // implementation; unless, it was requested with parameters that contain
         // a 'name'.
-        $this->app->bind(TenantProvider::class, function (Application $app, array $parameters): TenantedManager {
+        $this->app->bind(TenantProvider::class, function (Application $app, array $parameters): TenantProvider {
             return $app->make(TenantedManager::class)->provider($parameters['name'] ?? null);
         });
 
         // When requiring an instance of Tenancy we will return the currently
         // active tenancy, that is, the one on the end of the stack.
-        $this->app->bind(TenancyContract::class, function (Application $app): TenancyContract {
+        $this->app->bind(TenancyContract::class, function (Application $app): ?TenancyContract {
             return $app->make(TenantedManager::class)->current();
         });
 
@@ -100,17 +98,15 @@ class TenantedServiceProvider extends ServiceProvider
     private function initialiseFeatures(): void
     {
         /**
-         * @var array<class-string<\Tenanted\Core\Contracts\Feature>> $features
+         * $features = config('tenanted.features', []);
          *
-        $features = config('tenanted.features', []);
-
-        foreach ($features as $feature) {
-            $this->app->make($feature)
-                      ->setApplication($this->app)
-                      ->initialise();
-
-            FeatureInitialised::dispatch($feature);
-        }*/
+         * foreach ($features as $feature) {
+         * $this->app->make($feature)
+         * ->setApplication($this->app)
+         * ->initialise();
+         *
+         * FeatureInitialised::dispatch($feature);
+         * }*/
     }
 
     public function boot(): void
@@ -119,7 +115,7 @@ class TenantedServiceProvider extends ServiceProvider
             $this->bootConsole();
         }
 
-        //$this->bootFeatures();
+        $this->bootFeatures();
     }
 
     private function bootConsole(): void
@@ -135,14 +131,12 @@ class TenantedServiceProvider extends ServiceProvider
     private function bootFeatures(): void
     {
         /**
-         * @var array<class-string<\Tenanted\Core\Contracts\Feature>> $features
+         * $features = config('tenanted.features', []);
          *
-        $features = config('tenanted.features', []);
-
-        foreach ($features as $feature) {
-            $this->app->make($feature)->boot();
-            FeatureBooted::dispatch($feature);
-        }*/
+         * foreach ($features as $feature) {
+         * $this->app->make($feature)->boot();
+         * FeatureBooted::dispatch($feature);
+         * }*/
     }
 
     /**

@@ -39,7 +39,13 @@
     "release"           : "conventional-changelog --commit",
     "release:patch"     : "conventional-changelog --patch --commit",
     "release:minor"     : "conventional-changelog --minor --commit",
-    "release:major"     : "conventional-changelog --major --commit"
+    "release:major"     : "conventional-changelog --major --commit",
+    "psalm"             : "@php vendor/bin/psalm --no-cache --no-reflection-cache",
+    "phpstan"           : "@php vendor/bin/phpstan --memory-limit=2G",
+    "static"            : [
+      "psalm",
+      "phpstan"
+    ]
   },
   "extra"            : {
     "laravel": {

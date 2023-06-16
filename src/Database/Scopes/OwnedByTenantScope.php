@@ -48,10 +48,10 @@ class OwnedByTenantScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
+        // @phpstan-ignore-next-line
         /**
          * @psalm-suppress UndefinedDocblockClass
          * @var \Illuminate\Database\Eloquent\Model&\Tenanted\Core\Concerns\OwnedByTenant $model
-         * @phpstan-ignore-next-line
          * @var \Tenanted\Core\Contracts\TenantRelationHandler|null                       $handler
          */
         $handler = $model->getTenantRelationHandler();
